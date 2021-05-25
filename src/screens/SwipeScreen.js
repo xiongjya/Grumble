@@ -7,27 +7,25 @@ import Mock from '../../assets/data/mock.js';
 export const SwipeScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
-            <View>
-                <CardStack
-                    loop={true}
-                    verticalSwipe={false}
-                    renderNoMoreCards={() => null}
-                    style={styles.content}
-                >
-                    {Mock.map((item, index) => (
-                        <Card 
-                            key={index}
-                            style={styles.card}
-                        >
-                        <RestaurantCard 
-                            description={item.description}
-                            image={require('../../assets/images/pasta.png')}
-                            name={item.name}
-                        />
-                        </Card>
-                    ))}
-                </CardStack>
-            </View>
+            <CardStack
+                loop={true}
+                verticalSwipe={false}
+                renderNoMoreCards={() => null}
+                style={styles.content}
+            >
+                {Mock.map((item, index) => (
+                    <Card 
+                        key={index}
+                        style={styles.card}
+                    >
+                    <RestaurantCard 
+                        description={item.description}
+                        image={require('../../assets/images/pasta.png')}
+                        name={item.name}
+                    />
+                    </Card>
+                ))}
+            </CardStack>        
         </SafeAreaView>
     )
 };
