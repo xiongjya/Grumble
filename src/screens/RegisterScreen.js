@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AuthContext } from '../navigation/AuthProvider';
 
+const {register} = useContext(AuthContext);
 
-export const LoginScreen = ({navigation}) => {
+const onLoginPress = () => navigation.navigate('Login');
+
+export const RegisterScreen = ({navigation}) => {
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const {login} = useContext(AuthContext);
-    
-    const onRegisterPress = navigation.navigate('Register');
 
     return (
         <SafeAreaView style={styles.container}>
@@ -21,6 +21,15 @@ export const LoginScreen = ({navigation}) => {
                 source={require('../../assets/images/cutleries.png')} 
                 style={styles.image}
             />
+            <View style={styles.inputView}>
+                <TextInput
+                    onChangeText={text => setUsername(text)}
+                    placeholder='Username'
+                    style={styles.textInput}
+                    value={username}
+                    selectionColor='#ffd966'
+                />
+            </View>
             <View style={styles.inputView}>
                 <TextInput
                     onChangeText={text => setEmail(text)}
@@ -41,29 +50,23 @@ export const LoginScreen = ({navigation}) => {
                 />
             </View>
 
-            <TouchableOpacity
-                style={styles.forgetPasswordButton}
+            <TouchableOpacity style={styles.registerButton}>
+                <Text
+                    style={styles.registerText}
+                    onPress={() => register(email, password)}
                 >
-                <Text style={styles.text}>
-                    Forget your password?
+                    Register</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.loginButton}>
+                <Text
+                    style={styles.text}
+                    onPress={onLoginPress}
+                >
+                    Back to login.
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-                style={styles.loginButton}
-                onPress={() => login(email, password)}
-            >
-                <Text style={styles.loginText}>Login</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                style={styles.registerButton}
-                onPress={onRegisterPress}
-            >
-                <Text style={styles.text}>
-                    Don't have an account? Sign up here!
-                </Text>
-            </TouchableOpacity>
         </SafeAreaView>
     );
 };
@@ -103,12 +106,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
     },
-    forgetPasswordButton: {
-        alignSelf: 'flex-end',
-        marginRight: 40,
-        marginBottom: 10
-    },
-    loginButton: {
+    registerButton: {
         backgroundColor: '#ffffff',
         borderRadius: 30,
         width: "80%",
@@ -117,12 +115,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    loginText: {
+    registerText: {
         color: '#ffd966',
         fontWeight: 'bold',
         fontSize: 14,
     },
-    registerButton: {
+    loginButton: {
         bottom: 0,
     },
     text: {
