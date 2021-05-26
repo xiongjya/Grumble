@@ -11,7 +11,6 @@ export const SwipeScreen = () => {
                 loop={true}
                 verticalSwipe={false}
                 renderNoMoreCards={() => null}
-<<<<<<< HEAD
             >
                 {Mock.map((item, index) => (
                     <Card key={index}>
@@ -29,23 +28,6 @@ export const SwipeScreen = () => {
                     </Card>
                 ))}
             </CardStack>
-=======
-                style={styles.content}
-            >
-                {Mock.map((item, index) => (
-                    <Card 
-                        key={index}
-                        style={styles.card}
-                    >
-                    <RestaurantCard 
-                        description={item.description}
-                        image={require('../../assets/images/pasta.png')}
-                        name={item.name}
-                    />
-                    </Card>
-                ))}
-            </CardStack>        
->>>>>>> acb8a9da3e8ce2ba8cb254f65af3771ea102be39
         </SafeAreaView>
   );
 };
