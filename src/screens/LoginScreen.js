@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { AuthContext } from '../navigation/AuthProvider';
 
 
 export const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const {login} = useContext(AuthContext);
-    
-    const onRegisterPress = navigation.navigate('Register');
+    //const {login} = useContext(AuthContext);
+    //const onRegisterPress = navigation.push('Register');
 
     return (
         <SafeAreaView style={styles.container}>
@@ -51,14 +49,14 @@ export const LoginScreen = ({navigation}) => {
 
             <TouchableOpacity
                 style={styles.loginButton}
-                onPress={() => login(email, password)}
+                //onPress={() => login(email, password)}
             >
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
                 style={styles.registerButton}
-                onPress={onRegisterPress}
+                //onPress={onRegisterPress}
             >
                 <Text style={styles.text}>
                     Don't have an account? Sign up here!

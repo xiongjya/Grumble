@@ -1,15 +1,14 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { AuthContext } from '../navigation/AuthProvider';
 
-const {register} = useContext(AuthContext);
-
-const onLoginPress = () => navigation.navigate('Login');
 
 export const RegisterScreen = ({navigation}) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    //const {register} = useContext(AuthContext);
+
+    //const onLoginPress = () => navigation.goBack();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -53,7 +52,7 @@ export const RegisterScreen = ({navigation}) => {
             <TouchableOpacity style={styles.registerButton}>
                 <Text
                     style={styles.registerText}
-                    onPress={() => register(email, password)}
+                    //onPress={() => register(email, password)}
                 >
                     Register</Text>
             </TouchableOpacity>
@@ -61,7 +60,7 @@ export const RegisterScreen = ({navigation}) => {
             <TouchableOpacity style={styles.loginButton}>
                 <Text
                     style={styles.text}
-                    onPress={onLoginPress}
+                    //onPress={onLoginPress}
                 >
                     Back to login.
                 </Text>
