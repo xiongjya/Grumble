@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import { CommonActions } from "@react-navigation/native";
+import * as Authentication from "../../firebase/auth";
 
 export const RegisterScreen = ({navigation}) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    //const {register} = useContext(AuthContext);
+
+    const onRegisterPress = () => {
+        Authentication.createAccount(
+          { name: username, email, password },
+          (user) => navigation.dispatch(CommonActions.reset({
+            index: 0,
+            routes: [{
+              name: "Home"
+            }]
+          })),
+          (error) => {
+            return alert(error);
+          }
+        );
+    }
 
     const onLoginPress = () => navigation.goBack();
 
@@ -29,7 +44,7 @@ export const RegisterScreen = ({navigation}) => {
                     placeholder='Username'
                     style={styles.textInput}
                     value={username}
-                    selectionColor='#ffd966'
+                    selectionColor='#fac219'
                 />
             </View>
             <View style={styles.inputView}>
@@ -38,7 +53,7 @@ export const RegisterScreen = ({navigation}) => {
                     placeholder='Email'
                     style={styles.textInput}
                     value={email}
-                    selectionColor='#ffd966'
+                    selectionColor='#fac219'
                 />
             </View>
             <View style={styles.inputView}>
@@ -48,22 +63,26 @@ export const RegisterScreen = ({navigation}) => {
                     secureTextEntry={true}
                     style={styles.textInput}
                     value={password}
-                    selectionColor='#ffd966'
+                    selectionColor='#fac219'
                 />
             </View>
 
-            <TouchableOpacity style={styles.registerButton}>
+            <TouchableOpacity
+                style={styles.registerButton}
+                onPress={onRegisterPress}
+            >
                 <Text
                     style={styles.registerText}
-                    //onPress={() => register(email, password)}
                 >
                     Register</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity
+                style={styles.loginButton}
+                onPress={onLoginPress}
+            >
                 <Text
                     style={styles.text}
-                    onPress={onLoginPress}
                 >
                     Back to
                     <Text style={{fontWeight: 'bold'}}> login</Text>
@@ -74,8 +93,6 @@ export const RegisterScreen = ({navigation}) => {
         </KeyboardAvoidingView>
     );
 };
-
-// button onPress: toggle to next page
 
 const styles = StyleSheet.create({
     container: {

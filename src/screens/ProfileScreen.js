@@ -7,6 +7,8 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native';
+import { Icon } from 'react-native-elements';
+import * as Authentication from "../../firebase/auth";
 
 const Dietary = (props) => {
     const {diets} = props;
@@ -23,15 +25,34 @@ const Dietary = (props) => {
 
 const exampleDiet = ["vegan", "gluten-free"];
 
+const onLogoutPress = () => Authentication.logout(
+  () => navigation.dispatch(CommonActions.reset({
+    index: 0,
+    routes: [{ name: "Login" }]
+  })),
+  () => alert(error)
+)
+
 
 export const ProfileScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
-          <View style={styles.header}></View>
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.logoutButton}
+              onPress={onLogoutPress}
+            >
+              <Icon
+                name='log-out'
+                type='feather'
+                color='#434343'
+              />
+            </TouchableOpacity>
+          </View>
           <Image style={styles.avatar} source={require('../../assets/images/user.png')}/>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <Text style={styles.name}>John Doe</Text>
+              <Text style={styles.name}>{Authentication.getCurrentUserName()}</Text>
               <Dietary diets={exampleDiet}/>
               <TouchableOpacity style={styles.buttonContainer}>
                 <Text>Favourite Restaurants</Text>  
@@ -60,6 +81,11 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     position: 'absolute',
     marginTop: 130
+  },
+  logoutButton: {
+    marginTop: 7,
+    marginRight: 7,
+    alignSelf: 'flex-end',
   },
   name:{
     fontSize:22,

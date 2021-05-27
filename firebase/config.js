@@ -1,10 +1,11 @@
 import firebase from 'firebase/app';
-import '@firebase/auth';
-import '@firebase/firestore';
+import "firebase/auth";
+import "firebase/database";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAZFpiwO84iQX6l29d6vbAI1hBBlYe9pJA",
     authDomain: "grumble-d300e.firebaseapp.com",
+    databaseURL: "https://grumble-d300e-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "grumble-d300e",
     storageBucket: "grumble-d300e.appspot.com",
     messagingSenderId: "655611758211",
@@ -12,8 +13,6 @@ const firebaseConfig = {
     measurementId: "G-00G76DRW6X"
 };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+const firebaseApp = !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
-export { firebase };
+export default firebaseApp;
