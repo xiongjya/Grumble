@@ -31,7 +31,7 @@ const tabOptions = {
     inactiveTintColor: 'gray',
 }
 
-export const HomeScreen = () => {
+export const HomeScreen = ({navigation}) => {
     return (
         <Tab.Navigator screenOptions= {screenOptions}
                 tabBarOptions={tabOptions}>

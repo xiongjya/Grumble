@@ -2,7 +2,7 @@ import firebase from "./config";
 
 const auth = firebase.auth();
 
-export const signIn = async ({ email, password }, onSuccess, onError) => {
+export const login = async ({ email, password }, onSuccess, onError) => {
   try {
     const { user } = await auth.signInWithEmailAndPassword(email, password);
     return onSuccess(user);
@@ -16,7 +16,6 @@ export const createAccount = async ({ name, email, password }, onSuccess, onErro
     const { user } = await auth.createUserWithEmailAndPassword(email, password);
     if (user) {
       await user.updateProfile({ displayName: name });
-      await user.sendEmailVerification();
       return onSuccess(user);
     }
   } catch (error) {
@@ -24,7 +23,7 @@ export const createAccount = async ({ name, email, password }, onSuccess, onErro
   }
 }
 
-export const signOut = async (onSuccess, onError) => {
+export const logout = async (onSuccess, onError) => {
   try {
     await auth.signOut();
     return onSuccess();

@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
-import { Keyboard } from 'react-native';
-import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback,View } from 'react-native';
-
+import {
+    Image, KeyboardAvoidingView, StyleSheet,
+    Text, TextInput, TouchableOpacity,
+    TouchableWithoutFeedback,View, Keyboard
+} from 'react-native';
+import { CommonActions } from "@react-navigation/native";
+import * as Authentication from "../../firebase/auth";
 
 export const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    //const {login} = useContext(AuthContext);
+    const onLoginPress = () => {
+        Keyboard.dismiss();
+
+        Authentication.login(
+        { email, password },
+        (user) => navigation.dispatch(CommonActions.reset({
+            index: 0,
+            routes: [{
+              name: "Home"
+            }]
+          })),
+          (error) => {
+            return alert(error);
+          }
+        );
+    }
     const onRegisterPress = () => navigation.navigate('Register');
 
     return (
@@ -29,7 +48,7 @@ export const LoginScreen = ({navigation}) => {
                     placeholder='Email'
                     style={styles.textInput}
                     value={email}
-                    selectionColor='#ffd966'
+                    selectionColor='#fac219'
                 />
             </View>
             <View style={styles.inputView}>
@@ -39,7 +58,7 @@ export const LoginScreen = ({navigation}) => {
                     secureTextEntry={true}
                     style={styles.textInput}
                     value={password}
-                    selectionColor='#ffd966'
+                    selectionColor='#fac219'
                 />
             </View>
 
@@ -53,7 +72,7 @@ export const LoginScreen = ({navigation}) => {
 
             <TouchableOpacity
                 style={styles.loginButton}
-                //onPress={() => login(email, password)}
+                onPress={onLoginPress}
             >
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>

@@ -17,7 +17,7 @@ export const CardItem = ({
 
   return (
     <View style={styles.containerCardItem}>
-      <Image source={image} style={styles.image} />
+      <Image source={image} style={styles.image}/>
 
       <TouchableOpacity 
         style={styles.info}
@@ -52,7 +52,10 @@ export const CardItem = ({
       )}
 
       {information && (
-        <ScrollView style={styles.description}>
+        <ScrollView
+          style={styles.description}
+          contentContainerStyle={{justifyContent: 'center'}}
+        >
           <View style={[styles.padding, {flexDirection: 'row'}]}>
             <Text>Website: </Text>
 
@@ -92,29 +95,29 @@ const styles = StyleSheet.create({
         shadowColor: 'rgb(0,0,0.5)',
         shadowOffset: { height: 0, width: 0 },
         width: fullWidth - 60,
-        height: fullHeight - 250,
+        height: fullHeight - 220,
     },
     description: {
-      marginLeft: 15,
+      marginLeft: 15
     },
     image: {
       borderRadius: 10,
       width: fullWidth - 60,
-      height: 450,
+      height: 420,
     },
     info: {
       alignSelf: 'flex-end',
       position: 'absolute',
-      bottom: 200,
+      bottom: 180,
       right: 5
     },
     name: {
       paddingBottom: 7,
       marginLeft: 15,
       marginRight: 15,
-      marginTop: 15,
+      marginTop: 7,
       color: '#363636',
-      fontSize: 40,
+      fontSize: 35,
       fontWeight: 'bold',
     }, 
     operation: {
