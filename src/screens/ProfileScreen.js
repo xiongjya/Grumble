@@ -8,6 +8,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { CommonActions } from "@react-navigation/native";
 import * as Authentication from "../../firebase/auth";
 
 const Dietary = (props) => {
@@ -25,16 +26,19 @@ const Dietary = (props) => {
 
 const exampleDiet = ["vegan", "gluten-free"];
 
-const onLogoutPress = () => Authentication.logout(
-  () => navigation.dispatch(CommonActions.reset({
-    index: 0,
-    routes: [{ name: "Login" }]
-  })),
-  () => alert(error)
-)
 
+export const ProfileScreen = ({navigation}) => {
 
-export const ProfileScreen = () => {
+  const onLogoutPress = () => Authentication.logout(
+    () => navigation.dispatch(CommonActions.reset({
+      index: 0,
+      routes: [{ name: "Login" }]
+    })),
+    (error) => {
+      return alert(error);
+    }
+  )
+
     return (
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
