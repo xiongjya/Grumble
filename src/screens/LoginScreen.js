@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback,View } from 'react-native';
 
 
 export const LoginScreen = ({navigation}) => {
@@ -7,10 +8,13 @@ export const LoginScreen = ({navigation}) => {
     const [password, setPassword] = useState('');
 
     //const {login} = useContext(AuthContext);
-    //const onRegisterPress = navigation.push('Register');
+    const onRegisterPress = () => navigation.navigate('Register');
 
     return (
-        <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView 
+            behavior='padding'
+            style={styles.container}
+        >
             <Image
                 source={require('../../assets/images/grumble.png')}
                 style={styles.logoImage}
@@ -41,7 +45,7 @@ export const LoginScreen = ({navigation}) => {
 
             <TouchableOpacity
                 style={styles.forgetPasswordButton}
-                >
+            >
                 <Text style={styles.text}>
                     Forget your password?
                 </Text>
@@ -56,13 +60,15 @@ export const LoginScreen = ({navigation}) => {
 
             <TouchableOpacity 
                 style={styles.registerButton}
-                //onPress={onRegisterPress}
+                onPress={onRegisterPress}
             >
                 <Text style={styles.text}>
-                    Don't have an account? Sign up here!
+                    Don't have an account? Sign up
+                    <Text style={{fontWeight: 'bold'}}> here</Text>
+                    !
                 </Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -82,36 +88,38 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     image: {
-        width: "90%",
+        width: 340,
         height: 45,
         marginBottom: 20
     },
     inputView: {
-        backgroundColor: '#fac219',
-        borderRadius: 30,
-        width: "80%",
+        borderColor: '#ffd966',
+        borderBottomColor: '#fac219',
+        borderWidth: 1.25,
+        borderStyle: 'solid',
+        width: 340,
         height: 45,
-        marginBottom: 10,
-        alignItems: "center",
+        marginBottom: 5
     },
     textInput: {
         fontSize: 14,
         color: '#ffffff',
         height: 50,
         flex: 1,
-        padding: 10,
+        padding: 5
     },
     forgetPasswordButton: {
         alignSelf: 'flex-end',
         marginRight: 40,
-        marginBottom: 10
+        marginBottom: 10,
+        marginTop: 5
     },
     loginButton: {
         backgroundColor: '#ffffff',
         borderRadius: 30,
-        width: "80%",
+        width: 340,
         height: 45,
-        marginBottom: 20,
+        marginBottom: 15,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -127,5 +135,5 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         opacity: 0.8,
         fontSize: 12
-    }
+    },
 })

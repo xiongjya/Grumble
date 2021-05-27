@@ -3,7 +3,6 @@ import { Dimensions, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpac
 import { Icon } from 'react-native-elements';
 import { Options } from '../components/Options.js';
 
-
 export const CardItem = ({
   address,
   contact,

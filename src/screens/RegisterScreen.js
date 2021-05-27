@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
 export const RegisterScreen = ({navigation}) => {
@@ -8,10 +8,13 @@ export const RegisterScreen = ({navigation}) => {
     const [password, setPassword] = useState('');
     //const {register} = useContext(AuthContext);
 
-    //const onLoginPress = () => navigation.goBack();
+    const onLoginPress = () => navigation.goBack();
 
     return (
-        <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView 
+            behavior='padding'
+            style={styles.container}
+        >
             <Image
                 source={require('../../assets/images/grumble.png')}
                 style={styles.logoImage}
@@ -60,13 +63,15 @@ export const RegisterScreen = ({navigation}) => {
             <TouchableOpacity style={styles.loginButton}>
                 <Text
                     style={styles.text}
-                    //onPress={onLoginPress}
+                    onPress={onLoginPress}
                 >
-                    Back to login.
+                    Back to
+                    <Text style={{fontWeight: 'bold'}}> login</Text>
+                    .
                 </Text>
             </TouchableOpacity>
 
-        </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -86,31 +91,33 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     image: {
-        width: "90%",
+        width: 340,
         height: 45,
         marginBottom: 20
     },
     inputView: {
-        backgroundColor: '#fac219',
-        borderRadius: 30,
-        width: "80%",
+        borderColor: '#ffd966',
+        borderBottomColor: '#fac219',
+        borderWidth: 1.25,
+        borderStyle: 'solid',
+        width: 340,
         height: 45,
-        marginBottom: 10,
-        alignItems: "center",
+        marginBottom: 5
     },
     textInput: {
         fontSize: 14,
         color: '#ffffff',
         height: 50,
         flex: 1,
-        padding: 10,
+        padding: 5
     },
     registerButton: {
         backgroundColor: '#ffffff',
         borderRadius: 30,
-        width: "80%",
+        width: 340,
         height: 45,
-        marginBottom: 20,
+        marginBottom: 15,
+        marginTop: 10,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -126,5 +133,5 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         opacity: 0.8,
         fontSize: 12
-    }
+    },
 })
