@@ -1,18 +1,23 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { Dimensions, ImageBackground, SafeAreaView, StyleSheet } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
-import Mock from '../../assets/data/mock.js';
+import mock from '../../assets/data/mock.js';
 import { CardItem } from '../components/CardItem.js';
 
 export const SwipeScreen = () => {
   return (
+        <ImageBackground
+            source={require('../../assets/images/background.png')}
+            style={styles.background}
+        >
         <SafeAreaView style={styles.container}>
             <CardStack
                 loop={true}
                 verticalSwipe={false}
                 renderNoMoreCards={() => null}
             >
-                {Mock.map((item, index) => (
+            
+                {mock.map((item, index) => (
                     <Card key={index}>
                         <CardItem
                             address={item.address}
@@ -29,6 +34,7 @@ export const SwipeScreen = () => {
                 ))}
             </CardStack>
         </SafeAreaView>
+        </ImageBackground>
   );
 };
 
@@ -36,4 +42,8 @@ const styles = StyleSheet.create({
     container: {
         margin: 10,
     },
+    background: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+    }
 })

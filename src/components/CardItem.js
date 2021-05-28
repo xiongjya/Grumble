@@ -13,7 +13,7 @@ export const CardItem = ({
   reviews,
   website
 }) => {
-  const [information, setInformation] = useState(false);
+  const [information, setInformation] = useState(true);
 
   return (
     <View style={styles.containerCardItem}>
@@ -21,7 +21,7 @@ export const CardItem = ({
 
       <TouchableOpacity 
         style={styles.info}
-        onPress={() => setInformation(!information)}>
+        onPress={() => setInformation(information => !information)}>
         <Icon
           name='info'
           type='feather'
@@ -31,7 +31,7 @@ export const CardItem = ({
 
       <Text style={styles.name}>{name}</Text>
 
-      {!information && (
+      {information ? (
         <ScrollView style={styles.description}>
           <Text style={styles.padding}>{address}</Text>
 
@@ -49,29 +49,27 @@ export const CardItem = ({
 
           <Options arr={options}/>
         </ScrollView>
-      )}
+      ) : (
+          <ScrollView
+            style={styles.description}
+            contentContainerStyle={{justifyContent: 'center'}}
+          >
+            <View style={[styles.padding, {flexDirection: 'row'}]}>
+              <Text>Website: </Text>
 
-      {information && (
-        <ScrollView
-          style={styles.description}
-          contentContainerStyle={{justifyContent: 'center'}}
-        >
-          <View style={[styles.padding, {flexDirection: 'row'}]}>
-            <Text>Website: </Text>
+              <TouchableOpacity 
+                onPress={() => Linking.openURL(website)}>
+                <Text style={styles.website}>{website}</Text>
+              </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity 
-              onPress={() => Linking.openURL(website)}>
-              <Text style={styles.website}>{website}</Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.padding}>
+              <Text>Reviews:</Text>
 
-          <View style={styles.padding}>
-            <Text>Reviews:</Text>
-
-            <Text style={styles.reviews}>{reviews}</Text>
-          </View>
-          
-        </ScrollView>
+              <Text style={styles.reviews}>{reviews}</Text>
+            </View>
+            
+          </ScrollView>
       )}
       
     </View>
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
         shadowColor: 'rgb(0,0,0.5)',
         shadowOffset: { height: 0, width: 0 },
         width: fullWidth - 60,
-        height: fullHeight - 220,
+        height: fullHeight - 230,
     },
     description: {
       marginLeft: 15
@@ -108,7 +106,7 @@ const styles = StyleSheet.create({
     info: {
       alignSelf: 'flex-end',
       position: 'absolute',
-      bottom: 180,
+      bottom: 250,
       right: 5
     },
     name: {
