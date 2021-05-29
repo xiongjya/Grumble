@@ -74,7 +74,27 @@ As users who have chosen a place to eat at after using the application,
 4. Website equivalent that does not require users to create a profile for use
 
 ## Design
-
+<img
+  width="250"
+  alt="Login"
+  src="https://github.com/xiongjya/Grumble/blob/main/images/login.PNG">
+ <img
+  width="250"
+  alt="Swipe"
+  src="https://github.com/xiongjya/Grumble/blob/main/images/swipescreen.PNG">
+ <img
+  width="250"
+  alt="Swiping in action"
+  src="https://github.com/xiongjya/Grumble/blob/main/images/swipe-in-action.PNG">
+ <img
+  width="250"
+  alt="Chats"
+  src="https://github.com/xiongjya/Grumble/blob/main/images/chatrooms.PNG">
+ <img
+  width="250"
+  alt="Profile"
+  src="https://github.com/xiongjya/Grumble/blob/main/images/profile.PNG">
+  
 ## How are we different from similar platforms?
 Compared to similar apps on the App Store (such as Munch: Decide Where to Eat, Tine - Dine Together and many more), we offer:
 
@@ -87,6 +107,7 @@ Compared to similar apps on the App Store (such as Munch: Decide Where to Eat, T
 Furthermore, we allow users to create chat rooms based on the groups that they are in (with each session that they join), making it more convenient than to switch between our app and another messaging app for discussions. 
 
 ## Program flow
+[link to our program flow](https://drive.google.com/file/d/1h1k37xQHQRe5aB-pYbATqt9dqcVo2EZw/view?usp=sharing)
 
 ## Setting up
 Clone this repository
