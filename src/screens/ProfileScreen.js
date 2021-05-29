@@ -15,8 +15,11 @@ const Dietary = (props) => {
     const {diets} = props;
     return (
         <View style = {styles.info}>
-            {diets.map(diet =>
-                <View style = {styles.infoContainer}>
+            {diets.map((diet, index) =>
+                <View 
+                  style = {styles.infoContainer}
+                  key={index}
+                >
                     <Text style = {styles.infoText}>{diet}</Text>
                 </View>
             )}
