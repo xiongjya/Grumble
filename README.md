@@ -107,8 +107,8 @@ Compared to similar apps on the App Store (such as Munch: Decide Where to Eat, T
 Furthermore, we allow users to create chat rooms based on the groups that they are in (with each session that they join), making it more convenient than to switch between our app and another messaging app for discussions. 
 
 ## Program flow
-[<img
-  width="600"
+<img
+  width="500"
   alt="Program flow"
   src="https://github.com/xiongjya/Grumble/blob/main/images/program-flow.png">
 
