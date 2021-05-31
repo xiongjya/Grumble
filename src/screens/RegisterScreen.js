@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import { CommonActions } from "@react-navigation/native";
 import * as Authentication from "../../firebase/auth";
 
@@ -26,71 +26,75 @@ export const RegisterScreen = ({navigation}) => {
     const onLoginPress = () => navigation.goBack();
 
     return (
-        <KeyboardAvoidingView 
-            behavior='padding'
-            style={styles.container}
+        <TouchableWithoutFeedback 
+            onPress={Keyboard.dismiss}
         >
-            <Image
-                source={require('../../assets/images/grumble.png')}
-                style={styles.logoImage}
-            />
-            <Image 
-                source={require('../../assets/images/cutleries.png')} 
-                style={styles.image}
-            />
-            <View style={styles.inputView}>
-                <TextInput
-                    onChangeText={text => setUsername(text)}
-                    placeholder='Username'
-                    style={styles.textInput}
-                    value={username}
-                    selectionColor='#fac219'
-                />
-            </View>
-            <View style={styles.inputView}>
-                <TextInput
-                    onChangeText={text => setEmail(text)}
-                    placeholder='Email'
-                    style={styles.textInput}
-                    value={email}
-                    selectionColor='#fac219'
-                />
-            </View>
-            <View style={styles.inputView}>
-                <TextInput
-                    onChangeText={text => setPassword(text)}
-                    placeholder='Password'
-                    secureTextEntry={true}
-                    style={styles.textInput}
-                    value={password}
-                    selectionColor='#fac219'
-                />
-            </View>
-
-            <TouchableOpacity
-                style={styles.registerButton}
-                onPress={onRegisterPress}
+            <KeyboardAvoidingView 
+                behavior='padding'
+                style={styles.container}
             >
-                <Text
-                    style={styles.registerText}
-                >
-                    Register</Text>
-            </TouchableOpacity>
+                <Image
+                    source={require('../../assets/images/grumble.png')}
+                    style={styles.logoImage}
+                />
+                <Image 
+                    source={require('../../assets/images/cutleries.png')} 
+                    style={styles.image}
+                />
+                <View style={styles.inputView}>
+                    <TextInput
+                        onChangeText={text => setUsername(text)}
+                        placeholder='Username'
+                        style={styles.textInput}
+                        value={username}
+                        selectionColor='#fac219'
+                    />
+                </View>
+                <View style={styles.inputView}>
+                    <TextInput
+                        onChangeText={text => setEmail(text)}
+                        placeholder='Email'
+                        style={styles.textInput}
+                        value={email}
+                        selectionColor='#fac219'
+                    />
+                </View>
+                <View style={styles.inputView}>
+                    <TextInput
+                        onChangeText={text => setPassword(text)}
+                        placeholder='Password'
+                        secureTextEntry={true}
+                        style={styles.textInput}
+                        value={password}
+                        selectionColor='#fac219'
+                    />
+                </View>
 
-            <TouchableOpacity
-                style={styles.loginButton}
-                onPress={onLoginPress}
-            >
-                <Text
-                    style={styles.text}
+                <TouchableOpacity
+                    style={styles.registerButton}
+                    onPress={onRegisterPress}
                 >
-                    Back to
-                    <Text style={{fontWeight: 'bold'}}> login</Text>
-                    .
-                </Text>
-            </TouchableOpacity>
+                    <Text
+                        style={styles.registerText}
+                    >
+                        Register</Text>
+                </TouchableOpacity>
 
-        </KeyboardAvoidingView>
+                <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={onLoginPress}
+                >
+                    <Text
+                        style={styles.text}
+                    >
+                        Back to
+                        <Text style={{fontWeight: 'bold'}}> login</Text>
+                        .
+                    </Text>
+                </TouchableOpacity>
+
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     );
 };
 

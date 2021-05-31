@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Platform, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Icon, ListItem, SearchBar } from 'react-native-elements';
-import { RectButton, Swipeable } from 'react-native-gesture-handler';
+import { Swipeable } from 'react-native-gesture-handler';
 import mockChats from '../../assets/data/mockChats.js';
 
 export const ChatScreen = () => {
@@ -11,7 +11,7 @@ export const ChatScreen = () => {
     const filtering = (text) => {
         setSearch(text);
         if (text) {
-            const filtered = chats.filter(
+            const filtered = mockChats.filter(
                 function (item) {
                     const newChats = item.username 
                         ? item.username.toUpperCase()
