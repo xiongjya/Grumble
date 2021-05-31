@@ -110,7 +110,7 @@ Furthermore, we allow users to create chat rooms based on the groups that they a
 [<img
   width="600"
   alt="Program flow"
-  src="https://github.com/xiongjya/Grumble/blob/main/images/program-flow.PNG">
+  src="https://github.com/xiongjya/Grumble/blob/main/images/program-flow.png">
 
 ## Setting up
 Clone this repository
