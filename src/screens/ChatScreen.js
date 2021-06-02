@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Dimensions, FlatList, Platform, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Icon, ListItem, SearchBar } from 'react-native-elements';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -35,7 +35,7 @@ export const ChatScreen = () => {
                     name='trash-2'
                     type='feather'
                     color='#ffffff'
-                    size='35'
+                    size={35}
                 />
             }
         >

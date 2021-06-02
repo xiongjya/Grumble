@@ -1,10 +1,16 @@
 import React from 'react';
 import { Dimensions, ImageBackground, SafeAreaView, StyleSheet } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
-import mock from '../../assets/data/mock.js';
 import { CardItem } from '../components/CardItem.js';
+import mock from '../../assets/data/mock.js';
+import { StartScreen } from './StartScreen';
+import { DietaryOpsScreen } from './DietaryOpsScreen';
+import { DiningOpsScreen } from './DiningOpsScreen';
+import { PriceRangeScreen } from './PriceRangeScreen';
+import { LocationScreen } from './LocationScreen';
+import { createStackNavigator } from '@react-navigation/stack';
 
-export const SwipeScreen = () => {
+const SwipeScreen = () => {
   return (
         <ImageBackground
             source={require('../../assets/images/background.png')}
@@ -38,9 +44,27 @@ export const SwipeScreen = () => {
   );
 };
 
+const Stack = createStackNavigator();
+
+export const SwipeSession = () => {
+    return (
+        <Stack.Navigator 
+            initialRouteName='Start'
+            screenOptions={{headerShown: false}}
+        >
+            <Stack.Screen name="Start" component={ StartScreen }/>
+            <Stack.Screen name="DietaryOps" component={ DietaryOpsScreen } />
+            <Stack.Screen name="DiningOps" component={ DiningOpsScreen } />
+            <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
+            <Stack.Screen name="Location" component={ LocationScreen } />
+            <Stack.Screen name="Swipe" component={ SwipeScreen } />
+        </Stack.Navigator>
+    )
+}
+
 const styles = StyleSheet.create({
     container: {
-        margin: 10,
+        margin: 10
     },
     background: {
         width: Dimensions.get('window').width,

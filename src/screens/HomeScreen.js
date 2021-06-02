@@ -1,7 +1,7 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SwipeScreen } from './SwipeScreen';
+import { SwipeSession } from './SwipeScreen';
 import { ChatScreen } from './ChatScreen';
 import { ProfileScreen } from './ProfileScreen';
 
@@ -35,7 +35,7 @@ export const HomeScreen = ({navigation}) => {
     return (
         <Tab.Navigator screenOptions= {screenOptions}
                 tabBarOptions={tabOptions}>
-            <Tab.Screen name="Swipe" component={ SwipeScreen } />
+            <Tab.Screen name="Swipe" component={ SwipeSession } />
             <Tab.Screen name="Chat" component={ ChatScreen } />
             <Tab.Screen name="Profile" component={ ProfileScreen } />
         </Tab.Navigator>
