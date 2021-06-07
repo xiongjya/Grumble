@@ -32,6 +32,15 @@ export const logout = async (onSuccess, onError) => {
   }
 }
 
+export const forgotPassword = async ( {email} , onSuccess, onError) => {
+  try {
+    await auth.sendPasswordResetEmail(email);
+    return onSuccess();
+  } catch (error) {
+    return onError(error);
+  }
+}
+
 export const getCurrentUserId = () => auth.currentUser ? auth.currentUser.uid : null;
 
 export const getCurrentUserName = () => auth.currentUser ? auth.currentUser.displayName : null;

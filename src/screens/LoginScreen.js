@@ -29,6 +29,8 @@ export const LoginScreen = ({navigation}) => {
     }
     const onRegisterPress = () => navigation.navigate('Register');
 
+    const onForgetPress = () => navigation.navigate('ForgotPW');
+
     return (
         <TouchableWithoutFeedback 
             onPress={Keyboard.dismiss}
@@ -67,6 +69,7 @@ export const LoginScreen = ({navigation}) => {
 
                 <TouchableOpacity
                     style={styles.forgetPasswordButton}
+                    onPress={onForgetPress}
                 >
                     <Text style={styles.text}>
                         Forget your password?
