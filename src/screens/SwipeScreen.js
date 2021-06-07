@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, ImageBackground, SafeAreaView, StyleSheet } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import { CardItem } from '../components/CardItem.js';
 import mock from '../../assets/data/mock.js';
-import { StartScreen } from './StartScreen';
 import { DietaryOpsScreen } from './DietaryOpsScreen';
 import { DiningOpsScreen } from './DiningOpsScreen';
-import { PriceRangeScreen } from './PriceRangeScreen';
 import { LocationScreen } from './LocationScreen';
+import { PriceRangeScreen } from './PriceRangeScreen';
+import { SessionCodeScreen } from './SessionCodeScreen';
+import { StartScreen } from './StartScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const SwipeScreen = () => {
-  return (
+    const [selected, setSelected] = useState([]);
+
+    return (
         <ImageBackground
             source={require('../../assets/images/background.png')}
             style={styles.background}
@@ -24,7 +27,7 @@ const SwipeScreen = () => {
             >
             
                 {mock.map((item, index) => (
-                    <Card key={index}>
+                    <Card key={index} onSwipedRight={ () => { console.log(item.name) } }>
                         <CardItem
                             address={item.address}
                             contact={item.contact}
@@ -53,10 +56,11 @@ export const SwipeSession = () => {
             screenOptions={{headerShown: false}}
         >
             <Stack.Screen name="Start" component={ StartScreen }/>
-            <Stack.Screen name="DietaryOps" component={ DietaryOpsScreen } />
-            <Stack.Screen name="DiningOps" component={ DiningOpsScreen } />
-            <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
+            <Stack.Screen name="SessionCode" component={ SessionCodeScreen }/>
             <Stack.Screen name="Location" component={ LocationScreen } />
+            <Stack.Screen name="DiningOps" component={ DiningOpsScreen } />
+            <Stack.Screen name="DietaryOps" component={ DietaryOpsScreen } />
+            <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
             <Stack.Screen name="Swipe" component={ SwipeScreen } />
         </Stack.Navigator>
     )

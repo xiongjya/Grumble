@@ -1,11 +1,17 @@
 import React, {useState} from 'react';
+import { useDispatch } from 'react-redux';
 import { KeyboardAvoidingView, Keyboard, 
     View, Text, TouchableOpacity, TouchableWithoutFeedback, 
     StyleSheet, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { joined, setPin } from '../components/sessionSlice';
+
 export const StartScreen = ({navigation}) => {
+    const dispatch = useDispatch();
+
     const [sessionPin, setSessionPin] = useState('');
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <KeyboardAvoidingView 
@@ -18,9 +24,12 @@ export const StartScreen = ({navigation}) => {
                     </Text>
                     <TouchableOpacity 
                         style= {styles.startBtn}
-                        onPress={() => navigation.navigate('DietaryOps')}
+                        onPress={() => {
+                            dispatch(joined(true));
+                            navigation.navigate('SessionCode');
+                        }}
                     >
-                        <Text style= {styles.startTxt}>START</Text>
+                        <Text style= {styles.startText}>START</Text>
                     </TouchableOpacity>
                     <Text style= {styles.description}>
                         or enter your session pin below
@@ -35,11 +44,18 @@ export const StartScreen = ({navigation}) => {
                                 selectionColor='#fac219'
                             />
                         </View>
-                        <TouchableOpacity style={styles.checkBtn}>
-                        < Ionicons 
-                            name= 'ios-checkmark-circle'
-                            size= {40}
-                            color= '#fac219'/>
+                        <TouchableOpacity 
+                            style={styles.checkBtn}
+                            onPress={() => {
+                                dispatch(joined(false));
+                                dispatch(setPin(sessionPin));
+                                navigation.navigate('DietaryOps');
+                            }}
+                        >
+                            <Ionicons 
+                                name= 'ios-checkmark-circle'
+                                size= {40}
+                                color= '#fac219'/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -61,19 +77,19 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginBottom: 30,
     },
-    startTxt: {
+    startText: {
         color: '#ffffff',
         fontWeight: 'bold',
         fontSize: 40,
     },
     startBtn: {
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#FAC219',
         borderRadius: 30,
         width: 232,
         height: 73,
         marginBottom: 30,
-        alignItems: 'center',
-        justifyContent: 'center'
     },
     enterSP: {
         borderColor: '#FAC219',

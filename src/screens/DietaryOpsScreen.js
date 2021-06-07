@@ -1,24 +1,27 @@
 import React, {useState} from 'react';
+import { useSelector } from 'react-redux';
 import { SafeAreaView, Text, TouchableOpacity, View, 
     StyleSheet} from 'react-native';
+
+import { selectPin, selectStart } from '../components/sessionSlice';
 
 const COLOR1 = '#ff5733';
 const COLOR2 = '#c70039';
 const COLOR3 = '#900c3f';
 const COLOR4 = '#581845';
-const selected = [];
 
 const MyButton = (props) => {
     const [disabled, setDisabled] = useState(false);
+    const onPress = () => {
+        setDisabled(!disabled);
+    }
+
     return (
         <TouchableOpacity
                 style= { disabled
                     ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 2, paddingVertical: 8, paddingHorizontal: 18,}]
                     : [styles.buttonBase, {backgroundColor: props.color}]}
-                onPress= {() => {
-                    setDisabled(!disabled);
-                    selected.push(props.buttonText)
-                }}
+                onPress= {onPress}
         >
             <Text style= {styles.buttonText}>
                 {props.option}
@@ -28,10 +31,17 @@ const MyButton = (props) => {
 }
 
 export const DietaryOpsScreen = ({navigation}) => {
+    const start = useSelector(selectStart);
+    const pin = useSelector(selectPin);
 
     return (
         <SafeAreaView style= {styles.container}>
-            <Text style= {styles.qnNumber}>1/4</Text>
+            <Text style={styles.sessionCode}>PIN: {pin}</Text>
+
+            {start ? (<Text style= {styles.qnNumber}>3/4</Text>)
+                   : (<Text style= {styles.qnNumber}>1/2</Text>)
+            }
+
             <Text style= {styles.question}>
                 What are your cravings/dietary restrictions?
             </Text>
@@ -72,7 +82,7 @@ export const DietaryOpsScreen = ({navigation}) => {
 
             <TouchableOpacity 
                 style={styles.next}
-                onPress={() => navigation.navigate('DiningOps')}
+                onPress={() => navigation.navigate('PriceRange')}
             >
                 <Text style={styles.nextText}> NEXT </Text>
             </TouchableOpacity>
@@ -139,5 +149,14 @@ const styles = StyleSheet.create({
     },
     optionRow: {
         flexDirection: 'row',
+    },
+    sessionCode: {
+        position: 'absolute',
+        alignSelf: 'flex-end',
+        right: 20,
+        top: 70,
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 18
     }
 })

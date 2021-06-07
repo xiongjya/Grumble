@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-elements';
 
+import { selectPin, selectStart } from '../components/sessionSlice';
+
 export const PriceRangeScreen = ({navigation}) => {
+    const start = useSelector(selectStart);
+    const pin = useSelector(selectPin);
     const [rating, setRating] = useState(0);
 
     const ratingCompleted = (value) => {
@@ -13,9 +18,12 @@ export const PriceRangeScreen = ({navigation}) => {
 
     return (
         <SafeAreaView style={styles.view}>
-            <Text style={styles.qnNumber}>
-                3/4
-            </Text>
+            <Text style={styles.sessionCode}>PIN: {pin}</Text>
+
+            {start ? (<Text style= {styles.qnNumber}>4/4</Text>)
+                   : (<Text style= {styles.qnNumber}>2/2</Text>)
+            }
+
             <Text style={styles.question}>
                 Select your price range:
             </Text>
@@ -31,10 +39,10 @@ export const PriceRangeScreen = ({navigation}) => {
                 style={styles.rating}
             />
             <TouchableOpacity 
-                style={styles.next}
-                onPress={() => navigation.navigate('Location')}
+                style={styles.fin}
+                onPress={() => navigation.navigate('Swipe')}
             >
-                <Text style={styles.nextText}> NEXT </Text>
+                <Text style={styles.finText}> FINISH </Text>
             </TouchableOpacity>
         </SafeAreaView>
     )
@@ -48,7 +56,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#ffd966'
     },
-    next: {
+    fin: {
         backgroundColor: '#ffffff',
         borderRadius: 30,
         height: 30,
@@ -57,7 +65,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginTop: 30
     },
-    nextText: {
+    finText: {
         color: '#ffd966',
         fontWeight: 'bold',
         fontSize: 18
@@ -76,5 +84,14 @@ const styles = StyleSheet.create({
     },
     rating: {
         marginBottom: 30,
+    },
+    sessionCode: {
+        position: 'absolute',
+        alignSelf: 'flex-end',
+        right: 20,
+        top: 70,
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 18
     }
 })

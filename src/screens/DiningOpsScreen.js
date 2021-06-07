@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
+import { useSelector } from 'react-redux';
 import { SafeAreaView, Text, TouchableOpacity, 
     StyleSheet} from 'react-native';
 
-const selected = [];
+import { selectPin } from '../components/sessionSlice';
 
 const MyButton = (props) => {
     const [disabled, setDisabled] = useState(false);
@@ -13,7 +14,6 @@ const MyButton = (props) => {
                     : [styles.buttonBase, {backgroundColor: props.color}]}
                 onPress= {() => {
                     setDisabled(!disabled);
-                    selected.push(props.diningOp);
                 }}
         >
             <Text style= {styles.buttonText}>
@@ -24,8 +24,12 @@ const MyButton = (props) => {
 }
 
 export const DiningOpsScreen = ({navigation}) => {
+    const pin = useSelector(selectPin);
+
     return (
         <SafeAreaView style= {styles.container}>
+            <Text style={styles.sessionCode}>PIN: {pin}</Text>
+
             <Text style= {styles.qnNumber}>2/4</Text>
             <Text style= {styles.question}>
                 Select your dining options:
@@ -41,7 +45,7 @@ export const DiningOpsScreen = ({navigation}) => {
                 diningOp= 'Delivery'/>
             <TouchableOpacity 
                 style={styles.next}
-                onPress={() => navigation.navigate('PriceRange')}
+                onPress={() => navigation.navigate('DietaryOps')}
             >
                 <Text style={styles.nextText}> NEXT </Text>
             </TouchableOpacity>
@@ -102,6 +106,15 @@ const styles = StyleSheet.create({
     },
     nextText: {
         color: '#ffd966',
+        fontWeight: 'bold',
+        fontSize: 18
+    },
+    sessionCode: {
+        position: 'absolute',
+        alignSelf: 'flex-end',
+        right: 20,
+        top: 70,
+        color: '#ffffff',
         fontWeight: 'bold',
         fontSize: 18
     }
