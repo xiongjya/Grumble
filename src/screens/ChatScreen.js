@@ -36,7 +36,14 @@ const ChatScreen = ( {navigation} ) => {
         }
     }
 
-    const rightAction = () => (
+    const handleDeletePress = ( id )  => {
+        db
+            .collection('THREADS')
+            .doc(id)
+            .delete();
+    };
+
+    const rightAction = ( id ) => (
         <Button
             buttonStyle={styles.rectButton}
             containerStyle={styles.rectButton}
@@ -48,8 +55,8 @@ const ChatScreen = ( {navigation} ) => {
                     size={35}
                 />
             }
-        >
-            
+            onPress={ () => handleDeletePress(id) }
+        >     
         </Button>
     )
 
@@ -63,7 +70,7 @@ const ChatScreen = ( {navigation} ) => {
 
     const renderChat = ({ item }) => (
         <Swipeable
-            renderRightActions={rightAction}
+            renderRightActions={ () => rightAction(item._id) }
         >
             <TouchableOpacity
                 onPress={() => navigation.navigate('ChatRoom', { thread: item })}
@@ -125,10 +132,12 @@ const ChatScreen = ( {navigation} ) => {
             .catch(error => {
                 console.error("Error creating chat: ", error);
             })
+
+            setNewChat('');
         }
     }
 
-    /*
+    // to comment here after
     useEffect(() => {
         const unsubscribe = db
             .collection('THREADS')
@@ -139,7 +148,8 @@ const ChatScreen = ( {navigation} ) => {
                         _id: queryDocumentSnapshot.id,
                         name: '',
                         latestMessage: {
-                            text: ''
+                            text: '',
+                            createdAt: new Date().getTime()
                         },
                         ...queryDocumentSnapshot.data()
                     }
@@ -155,8 +165,7 @@ const ChatScreen = ( {navigation} ) => {
         
         return () => unsubscribe();
     }, []);
-    */
-
+    
     return (
         <SafeAreaView style={styles.container}>
             {loading ? (

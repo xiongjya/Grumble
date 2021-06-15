@@ -7,7 +7,6 @@ import * as Authentication from "../../firebase/auth";
 import db from '../../firebase/firestore';
 
 export const ChatRoomScreen = ({ route, navigation }) => {
-    // settle the user later
     const currentUser = Authentication.getCurrentUserObject();
     const { thread } = route.params;
 
@@ -50,13 +49,13 @@ export const ChatRoomScreen = ({ route, navigation }) => {
             });
     }
 
-    /*
+    // to comment here after
     useEffect(() => {
         const messagesListener = db
             .collection('THREADS')
             .doc(thread._id)
             .collection('MESSAGES')
-            .orderBy('latestMessage', 'desc')
+            .orderBy('createdAt', 'desc')
             .onSnapshot((querySnapshot) => {
                 const messages = querySnapshot.docs.map((doc) => {
                     const firebaseData = doc.data();
@@ -84,7 +83,7 @@ export const ChatRoomScreen = ({ route, navigation }) => {
 
             return () => messagesListener();
     }, []);
-    */
+    
 
     const renderBubble = (props) => {
         return (
