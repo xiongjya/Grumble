@@ -27,7 +27,7 @@ const SwipeScreen = () => {
             >
             
                 {mock.map((item, index) => (
-                    <Card key={index} onSwipedRight={ () => { console.log(item.name) } }>
+                    <Card key={index} onSwipedRight={ () => { setSelected(() => selected.push(item.name)) } }>
                         <CardItem
                             address={item.address}
                             contact={item.contact}

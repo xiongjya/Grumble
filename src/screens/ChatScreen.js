@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
-import { Dimensions, FlatList, Platform, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, Button, Icon, ListItem, SearchBar } from 'react-native-elements';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, FlatList, Platform, SafeAreaView, 
+    StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Avatar, Button, FAB, Icon, ListItem, Overlay, SearchBar } from 'react-native-elements';
 import { Swipeable } from 'react-native-gesture-handler';
-import mockChats from '../../assets/data/mockChats.js';
+import { createStackNavigator } from '@react-navigation/stack';
 
-export const ChatScreen = () => {
+import { ChatRoomScreen } from './ChatRoomScreen';
+import db from '../../firebase/firestore';
+
+const ChatScreen = ( {navigation} ) => {
+    const [initialChats, setInitialChats] = useState([]);
+    const [chats, setChats] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const [search, setSearch] = useState('');
-    const [chats, setChats] = useState(mockChats);
+
+    const [visible, setVisible] = useState(false);
+    const [newChat, setNewChat] = useState('');
 
     const filtering = (text) => {
         setSearch(text);
         if (text) {
-            const filtered = mockChats.filter(
+            const filtered = initialChats.filter(
                 function (item) {
-                    const newChats = item.username 
-                        ? item.username.toUpperCase()
+                    const newChats = item.name 
+                        ? item.name.toUpperCase()
                         : ''.toUpperCase();
                     const textMsg = text.toUpperCase();
                     return newChats.indexOf(textMsg) > -1;
@@ -22,7 +32,7 @@ export const ChatScreen = () => {
             )
             setChats(filtered);
         } else {
-            setChats(mockChats);
+            setChats(initialChats);
         }
     }
 
@@ -43,64 +53,200 @@ export const ChatScreen = () => {
         </Button>
     )
 
+    const add = () => (
+        <Icon
+            name='plus'
+            type='feather'
+            color='#ffffff'
+        />
+    )
+
     const renderChat = ({ item }) => (
         <Swipeable
-            renderRightActions={rightAction}>
-        <ListItem
-            bottomDivider='true'
-            containerStyle={styles.chat}
+            renderRightActions={rightAction}
         >
-            <Avatar 
-                source={require('../../assets/images/user.png')}
-                rounded='true'
-                size='medium'
-            />
+            <TouchableOpacity
+                onPress={() => navigation.navigate('ChatRoom', { thread: item })}
+            >
+            <ListItem
+                bottomDivider='true'
+                containerStyle={styles.chat}
+            >
+                <Avatar 
+                    source={require('../../assets/images/user.png')}
+                    rounded='true'
+                    size='medium'
+                />
 
-            <ListItem.Content style={styles.content}>
-                <ListItem.Title
-                    style={styles.username}
-                >
-                    {item.username}
-                </ListItem.Title>
-                
-                <ListItem.Subtitle
-                    style={styles.message}
-                >
-                    {item.message}
-                </ListItem.Subtitle>
-            </ListItem.Content>
-        </ListItem>
+                <ListItem.Content style={styles.content}>
+                    <ListItem.Title
+                        style={styles.name}
+                    >
+                        {item.name}
+                    </ListItem.Title>
+                    
+                    <ListItem.Subtitle
+                        style={styles.latestMessage}
+                    >
+                        {item.latestMessage.text}
+                    </ListItem.Subtitle>
+                </ListItem.Content>
+            </ListItem>
+            </TouchableOpacity>
         </Swipeable>
     );
 
+    const toggleOverlay = () => {
+        setVisible(!visible);
+    }
+
+    const handleCreatePress = () => {
+        if (newChat.length > 0) {
+          db
+            .collection('THREADS')
+            .add({
+              name: newChat,
+              latestMessage: {
+                  text: `You have joined the room ${newChat}.`,
+                  createdAt: new Date().getTime()
+              }
+            })
+            .then((docRef) => {
+                docRef
+                    .collection('MESSAGES')
+                    .add({
+                        text: `You have joined the room ${newChat}.`,
+                        createdAt: new Date().getTime(),
+                        system: true
+                    });
+
+                toggleOverlay();
+            })
+            .catch(error => {
+                console.error("Error creating chat: ", error);
+            })
+        }
+    }
+
+    /*
+    useEffect(() => {
+        const unsubscribe = db
+            .collection('THREADS')
+            .orderBy('latestMessage.createdAt', 'desc')
+            .onSnapshot((querySnapshot) => {
+                const threads = querySnapshot.docs.map((queryDocumentSnapshot) => {
+                    return {
+                        _id: queryDocumentSnapshot.id,
+                        name: '',
+                        latestMessage: {
+                            text: ''
+                        },
+                        ...queryDocumentSnapshot.data()
+                    }
+                });
+
+                setInitialChats(threads);
+                setChats(initialChats);
+
+                if (loading) {
+                    setLoading(false);
+                }
+            });
+        
+        return () => unsubscribe();
+    }, []);
+    */
+
     return (
         <SafeAreaView style={styles.container}>
-            {Platform.OS === 'ios' ? (
-                <SearchBar
-                placeholder='Search'
-                onChangeText={(text) => filtering(text)}
-                value={search}
-                containerStyle={styles.searchBar}
-                inputContainerStyle={styles.textInputBar}
-                round='true'
-                platform='ios'
-            />) : (
-                <SearchBar
-                placeholder='Search'
-                onChangeText={(text) => filtering(text)}
-                value={search}
-                containerStyle={styles.searchBar}
-                inputContainerStyle={styles.textInputBar}
-                round='true'
-            />)}
+            {loading ? (
+                <View style={{justifyContent: 'center'}}>
+                    <ActivityIndicator size='large' color='#be75e4' />
+                </View>
+            ) : (
+                <View>
+                    {Platform.OS === 'ios' ? (
+                        <SearchBar
+                        placeholder='Search'
+                        onChangeText={(text) => filtering(text)}
+                        value={search}
+                        containerStyle={styles.searchBar}
+                        inputContainerStyle={styles.textInputBar}
+                        round='true'
+                        platform='ios'
+                    />) : (
+                        <SearchBar
+                        placeholder='Search'
+                        onChangeText={(text) => filtering(text)}
+                        value={search}
+                        containerStyle={styles.searchBar}
+                        inputContainerStyle={styles.textInputBar}
+                        round='true'
+                    />)}
 
-            <FlatList
-                data={chats}
-                renderItem={renderChat}
-                keyExtractor={(item, index) => index.toString()}
-            />
+                    <FlatList
+                        data={chats}
+                        renderItem={renderChat}
+                        keyExtractor={item => item._id}
+                    />
+
+                    <FAB
+                        icon={add}
+                        placement='right'
+                        onPress={toggleOverlay}
+                    />
+
+                    <Overlay
+                        isVisible={visible}
+                        onBackdropPress={toggleOverlay}
+                        overlayStyle={styles.overlay}
+                    >
+                        <Text style={styles.room}>Create a new chat room</Text>
+                        <TextInput 
+                            placeholder='Room name'
+                            maxLength={40}
+                            onChangeText={setNewChat}
+                            value={newChat}
+                            style={styles.roomName}
+                        />
+                        <TouchableOpacity
+                            disabled={newChat.length === 0}
+                            onPress={handleCreatePress}
+                            style={styles.createButton}
+                        >
+                            <Text style={styles.create}>CREATE</Text>
+                        </TouchableOpacity>
+                    </Overlay>
+                </View>
+            )}
         </SafeAreaView>
     )
+}
+
+const Stack = createStackNavigator();
+
+export const ChatHomeScreen = () => {
+    return (
+        <Stack.Navigator
+            initialRouteName='Chats'
+        >
+            <Stack.Screen 
+                name='Chats' 
+                component={ChatScreen}
+                options={
+                    {headerShown: false}
+                }
+            />
+            <Stack.Screen 
+                name='ChatRoom' 
+                component={ChatRoomScreen} 
+                options={({route}) => ({
+                    title: route.params.thread.name
+                })}
+            />
+        </Stack.Navigator>
+    )
+
 }
 
 const fullWidth = Dimensions.get('window').width;
@@ -119,7 +265,7 @@ const styles = StyleSheet.create({
     content: {
         justifyContent: 'flex-start'
     },
-    message: {
+    latestMessage: {
         color: '#888888',
     },
     rectButton: {
@@ -139,7 +285,40 @@ const styles = StyleSheet.create({
         backgroundColor: '#efefef',
         height: 40
     },
-    username: {
+    name: {
         fontWeight: 'bold',
+    },
+    overlay: {
+        height: 150,
+        width: 300,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    room: {
+        fontWeight: 'bold',
+        fontSize: 24,
+        marginBottom: 15
+    },
+    roomName: {
+        alignSelf: 'flex-start',
+        fontSize: 15,
+        marginBottom: 20,
+        marginLeft: 10,
+        borderWidth: 1,
+        borderColor: '#ffffff',
+        borderBottomColor: '#be75e4',
+        width: 260,
+        padding: 5
+    },
+    createButton: {
+        borderRadius: 30,
+        backgroundColor: '#be75e4',
+        paddingHorizontal: 15,
+        paddingVertical: 10
+    },
+    create: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 18
     }
 })

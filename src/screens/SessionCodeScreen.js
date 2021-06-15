@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-import { setPin } from '../components/sessionSlice';
+import { setPin } from '../redux/sessionSlice';
 
 const makeSession = () => {
     let text = "";
@@ -29,7 +29,7 @@ export const SessionCodeScreen = ({navigation}) => {
                 style={styles.start}
                 onPress={() => navigation.navigate('Location')}
             >
-                <Text style={styles.text}>START</Text>
+                <Text style={[styles.text, {color: '#ffd966'}]}>START</Text>
             </TouchableOpacity>
         </SafeAreaView>
     )
@@ -53,15 +53,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 25
     },
-    startText: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 40,
-    },
     start: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FAC219',
+        backgroundColor: '#be75e4',
         borderRadius: 30,
         marginTop: 30,
         paddingHorizontal: 20,

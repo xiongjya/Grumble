@@ -5,7 +5,7 @@ import { KeyboardAvoidingView, Keyboard,
     StyleSheet, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { joined, setPin } from '../components/sessionSlice';
+import { joined, setPin } from '../redux/sessionSlice';
 
 export const StartScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -51,11 +51,12 @@ export const StartScreen = ({navigation}) => {
                                 dispatch(setPin(sessionPin));
                                 navigation.navigate('DietaryOps');
                             }}
+                            disabled={sessionPin.length !== 6}
                         >
                             <Ionicons 
                                 name= 'ios-checkmark-circle'
                                 size= {40}
-                                color= '#fac219'/>
+                                color= '#be75e4'/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -78,21 +79,21 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     startText: {
-        color: '#ffffff',
+        color: '#ffd966',
         fontWeight: 'bold',
         fontSize: 40,
     },
     startBtn: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FAC219',
-        borderRadius: 30,
+        backgroundColor: '#be75e4',
+        borderRadius: 45,
         width: 232,
         height: 73,
-        marginBottom: 30,
+        marginBottom: 30
     },
     enterSP: {
-        borderColor: '#FAC219',
+        borderColor: '#be75e4',
         borderWidth: 2,
         borderRadius: 30,
         width: '70%',

@@ -1,13 +1,25 @@
 import React, {useState} from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 
-import { selectPin } from '../components/sessionSlice';
+import { selectPin } from '../redux/sessionSlice';
+import { addDistance } from '../redux/filterOptionsSlice';
 
 export const LocationScreen = ({navigation}) => {
+    const dispatch = useDispatch();
     const pin = useSelector(selectPin);
     const [postalCode, setPostalCode] = useState('');
+    const [distance, setDistance] = useState(0.5);
+
+    const onDistanceChange = (value) => {
+        setDistance(value.toFixed(1));
+    }
+
+    const onPressNext = () => {
+        dispatch(addDistance(distance));
+        navigation.navigate('DiningOps');
+    };
 
     return (
         <TouchableWithoutFeedback
@@ -36,7 +48,7 @@ export const LocationScreen = ({navigation}) => {
                     />
                 </View>
                 <Text style= {styles.question}>
-                    Distance radius:
+                    Distance radius: {distance}
                 </Text>
                 <Slider
                     style={{width: '70%', height: 40}}
@@ -44,6 +56,7 @@ export const LocationScreen = ({navigation}) => {
                     maximumValue={5}
                     minimumTrackTintColor="#FFFFFF"
                     maximumTrackTintColor="#rgba(255, 255, 255, 0.4)"
+                    onValueChange={onDistanceChange}
                 />
                 <View style={styles.dist}>
                     <Text style= {{color: '#ffffff', fontSize: 14}}>0.5km</Text>
@@ -51,7 +64,7 @@ export const LocationScreen = ({navigation}) => {
                 </View>
                 <TouchableOpacity 
                     style={styles.next}
-                    onPress={() => navigation.navigate('DiningOps')}
+                    onPress={onPressNext}
                 >
                     <Text style={styles.nextText}> NEXT </Text>
                 </TouchableOpacity>
@@ -116,16 +129,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     next: {
-        backgroundColor: '#ffffff',
+        backgroundColor: '#ffd966',
         borderRadius: 30,
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 15,
-        marginTop: 30
+        marginTop: 30,
+        borderWidth: 2,
+        borderColor: '#be75e4'
     },
     nextText: {
-        color: '#ffd966',
+        color: '#be75e4',
         fontWeight: 'bold',
         fontSize: 18
     },

@@ -1,20 +1,32 @@
 import React, {useState} from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SafeAreaView, Text, TouchableOpacity, 
     StyleSheet} from 'react-native';
 
-import { selectPin } from '../components/sessionSlice';
+import { selectPin } from '../redux/sessionSlice';
+import { addDining, removeDining } from '../redux/filterOptionsSlice';
 
 const MyButton = (props) => {
+    const dispatch = useDispatch();
+
     const [disabled, setDisabled] = useState(false);
+    const onPress = () => {
+        setDisabled(!disabled);
+
+        if (disabled) {
+            dispatch(removeDining(props.diningOp));
+        } else {
+            dispatch(addDining(props.diningOp));
+        }
+        
+    }
+
     return (
         <TouchableOpacity
                 style= { disabled
                     ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 3}]
                     : [styles.buttonBase, {backgroundColor: props.color}]}
-                onPress= {() => {
-                    setDisabled(!disabled);
-                }}
+                onPress= { onPress }
         >
             <Text style= {styles.buttonText}>
                 {props.diningOp}
@@ -96,16 +108,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     next: {
-        backgroundColor: '#ffffff',
+        backgroundColor: '#ffd966',
         borderRadius: 30,
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 15,
-        marginTop: 30
+        marginTop: 30,
+        borderWidth: 2,
+        borderColor: '#be75e4'
     },
     nextText: {
-        color: '#ffd966',
+        color: '#be75e4',
         fontWeight: 'bold',
         fontSize: 18
     },

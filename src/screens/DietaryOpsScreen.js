@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SafeAreaView, Text, TouchableOpacity, View, 
     StyleSheet} from 'react-native';
 
-import { selectPin, selectStart } from '../components/sessionSlice';
+import { selectPin, selectStart } from '../redux/sessionSlice';
+import { addDietary, removeDietary } from '../redux/filterOptionsSlice';
 
 const COLOR1 = '#ff5733';
 const COLOR2 = '#c70039';
@@ -11,9 +12,18 @@ const COLOR3 = '#900c3f';
 const COLOR4 = '#581845';
 
 const MyButton = (props) => {
+    const dispatch = useDispatch();
     const [disabled, setDisabled] = useState(false);
+
     const onPress = () => {
         setDisabled(!disabled);
+
+        if (disabled) {
+            dispatch(removeDietary(props.option));
+        } else {
+            dispatch(addDietary(props.option));
+        }
+        
     }
 
     return (
@@ -134,16 +144,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     next: {
-        backgroundColor: '#ffffff',
+        backgroundColor: '#ffd966',
         borderRadius: 30,
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 15,
-        marginTop: 30
+        marginTop: 30,
+        borderWidth: 2,
+        borderColor: '#be75e4'
     },
     nextText: {
-        color: '#ffd966',
+        color: '#be75e4',
         fontWeight: 'bold',
         fontSize: 18
     },

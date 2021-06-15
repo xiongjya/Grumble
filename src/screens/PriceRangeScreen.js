@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-elements';
 
-import { selectPin, selectStart } from '../components/sessionSlice';
+import { selectPin, selectStart } from '../redux/sessionSlice';
+import { addRating } from '../redux/filterOptionsSlice';
 
 export const PriceRangeScreen = ({navigation}) => {
+    const dispatch = useDispatch();
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
     const [rating, setRating] = useState(0);
 
     const ratingCompleted = (value) => {
         setRating(value);
+        dispatch(addRating(value));
     }
 
     const DOLLAR = require('../../assets/images/rate.png')
@@ -40,7 +43,9 @@ export const PriceRangeScreen = ({navigation}) => {
             />
             <TouchableOpacity 
                 style={styles.fin}
-                onPress={() => navigation.navigate('Swipe')}
+                onPress={() => {
+                    navigation.navigate('Swipe');
+                }}
             >
                 <Text style={styles.finText}> FINISH </Text>
             </TouchableOpacity>
@@ -57,16 +62,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffd966'
     },
     fin: {
-        backgroundColor: '#ffffff',
+        backgroundColor: '#ffd966',
         borderRadius: 30,
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 15,
-        marginTop: 30
+        marginTop: 30,
+        borderWidth: 2,
+        borderColor: '#be75e4'
     },
     finText: {
-        color: '#ffd966',
+        color: '#be75e4',
         fontWeight: 'bold',
         fontSize: 18
     },
