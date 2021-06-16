@@ -4,7 +4,7 @@ import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWitho
 import Slider from '@react-native-community/slider';
 
 import { selectPin } from '../redux/sessionSlice';
-import { addDistance } from '../redux/filterOptionsSlice';
+import { addDistance, addLocation } from '../redux/filterOptionsSlice';
 
 export const LocationScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -17,6 +17,7 @@ export const LocationScreen = ({navigation}) => {
     }
 
     const onPressNext = () => {
+        dispatch(addLocation(postalCode));
         dispatch(addDistance(distance));
         navigation.navigate('DiningOps');
     };

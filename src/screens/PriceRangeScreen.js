@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-elements';
 
+import {getCurrentUserId} from '../../firebase/auth';
+import * as Database from '../../firebase/database';
+
 import { selectPin, selectStart } from '../redux/sessionSlice';
-import { addRating } from '../redux/filterOptionsSlice';
+import { addRating, selectLocation } from '../redux/filterOptionsSlice';
 
 export const PriceRangeScreen = ({navigation}) => {
     const dispatch = useDispatch();
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
+    const postalCode = useSelector(selectLocation);
     const [rating, setRating] = useState(0);
+    const [userId, setUserId] = useState('');
 
     const ratingCompleted = (value) => {
         setRating(value);
         dispatch(addRating(value));
     }
 
+    const onPressFinish = () => {
+        if (start) {
+            Database.createRoom(pin, userId, postalCode);
+        } else {
+            Database.joinRoom(pin, userId);
+        }
+    }
+
     const DOLLAR = require('../../assets/images/rate.png')
+
+    useEffect(() => setUserId(getCurrentUserId()), [])
 
     return (
         <SafeAreaView style={styles.view}>
@@ -44,6 +59,7 @@ export const PriceRangeScreen = ({navigation}) => {
             <TouchableOpacity 
                 style={styles.fin}
                 onPress={() => {
+                    onPressFinish();
                     navigation.navigate('Swipe');
                 }}
             >

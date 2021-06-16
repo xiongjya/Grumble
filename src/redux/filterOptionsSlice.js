@@ -21,6 +21,9 @@ export const slice = createSlice({
     removeDining: (state, option) => {
         state.dining = state.dining.filter(y => y !== option.payload);
     },
+    addLocation: (state, value) => {
+      state.location = value.payload;
+    },
     addDistance: (state, value) => {
         state.distance = value.payload;
     },
@@ -30,11 +33,12 @@ export const slice = createSlice({
   },
 });
 
-export const { addDietary, addDining, addDistance, addRating, removeDietary, removeDining } = slice.actions;
+export const { addDietary, addDining, addDistance, addRating, addLocation, removeDietary, removeDining } = slice.actions;
 
 export const selectDietary = state => state.filtered.dietary;
 export const selectDining = state => state.filtered.dining;
 export const selectDistance = state => state.filtered.distance;
+export const selectLocation = state => state.filtered.location;
 export const selectRating = state => state.filtered.rating;
 
 export default slice.reducer;

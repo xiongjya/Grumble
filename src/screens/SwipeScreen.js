@@ -1,18 +1,39 @@
-import React, { useState } from 'react';
-import { Dimensions, ImageBackground, SafeAreaView, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, Text } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import { CardItem } from '../components/CardItem.js';
 import mock from '../../assets/data/mock.js';
+
 import { DietaryOpsScreen } from './DietaryOpsScreen';
 import { DiningOpsScreen } from './DiningOpsScreen';
 import { LocationScreen } from './LocationScreen';
 import { PriceRangeScreen } from './PriceRangeScreen';
 import { SessionCodeScreen } from './SessionCodeScreen';
 import { StartScreen } from './StartScreen';
+
 import { createStackNavigator } from '@react-navigation/stack';
+
+import { database } from '../../firebase/database';
+
+import { selectPin } from '../redux/sessionSlice';
+import { useSelector } from 'react-redux';
+
+
 
 const SwipeScreen = () => {
     const [selected, setSelected] = useState([]);
+    const [location, setLocation] = useState('');
+    const pin = useSelector(selectPin);
+
+    const getData = async () => {
+        await database.ref('rooms/' + pin ).once('value',
+        (snap) => { setLocation(snap.val().location) });
+    }
+
+    useEffect(() => {
+            try { getData() }
+            catch (error) {alert (error)}
+        }, [])
 
     return (
         <ImageBackground
@@ -42,6 +63,7 @@ const SwipeScreen = () => {
                     </Card>
                 ))}
             </CardStack>
+            <Text> {location} </Text>
         </SafeAreaView>
         </ImageBackground>
   );
