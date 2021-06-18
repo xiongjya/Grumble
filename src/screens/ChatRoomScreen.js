@@ -28,7 +28,7 @@ export const ChatRoomScreen = ({ route, navigation }) => {
                 }
             })
             .catch(error => {
-                console.error("Error creating chat: ", error);
+                console.error("Error sending message: ", error);
             });
 
         await db
@@ -45,11 +45,10 @@ export const ChatRoomScreen = ({ route, navigation }) => {
                 { merge: true }
             )
             .catch(error => {
-                console.error("Error creating chat: ", error);
+                console.error("Error sending message: ", error);
             });
     }
-
-    // to comment here after
+    
     useEffect(() => {
         const messagesListener = db
             .collection('THREADS')
@@ -84,7 +83,6 @@ export const ChatRoomScreen = ({ route, navigation }) => {
             return () => messagesListener();
     }, []);
     
-
     const renderBubble = (props) => {
         return (
             <Bubble

@@ -6,6 +6,7 @@ export const slice = createSlice({
     dietary: [],
     dining: [],
     distance: 0.5,
+    location: '',
     rating: 0
   },
   reducers: {

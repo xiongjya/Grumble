@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-elements';
 
-import {getCurrentUserId} from '../../firebase/auth';
+import * as Authentication from '../../firebase/auth';
 import * as Database from '../../firebase/database';
 
 import { selectPin, selectStart } from '../redux/sessionSlice';
 import { addRating, selectLocation } from '../redux/filterOptionsSlice';
+import db from '../../firebase/firestore';
 
 export const PriceRangeScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -22,17 +23,57 @@ export const PriceRangeScreen = ({navigation}) => {
         dispatch(addRating(value));
     }
 
+    const createChat = () => {
+        const displayName = Authentication.getCurrentUserName();
+
+        db.collection('THREADS')
+          .doc(pin)
+          .set({
+            name: 'Room',
+            latestMessage: {
+                text: `You have joined a new room created by ${displayName}.`,
+                createdAt: new Date().getTime()
+            },
+            creator: displayName
+          })
+        
+        db.collection('THREADS')
+          .doc(pin)
+          .collection('MESSAGES')
+            .add({
+                text: `You have joined a new room created by ${displayName}.`,
+                createdAt: new Date().getTime(),
+                system: true
+            });
+
+        db.collection('USERS')
+          .doc(userId)
+          .collection('chats')
+          .doc(pin)
+          .set({});
+    }
+
+    const joinChat = () => {
+        db.collection('USERS')
+          .doc(userId)
+          .collection('chats')
+          .doc(pin)
+          .set({});
+    }
+
     const onPressFinish = () => {
         if (start) {
             Database.createRoom(pin, userId, postalCode);
+            createChat();
         } else {
             Database.joinRoom(pin, userId);
+            joinChat();
         }
     }
 
     const DOLLAR = require('../../assets/images/rate.png')
 
-    useEffect(() => setUserId(getCurrentUserId()), [])
+    useEffect(() => setUserId(Authentication.getCurrentUserId()), [])
 
     return (
         <SafeAreaView style={styles.view}>
