@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import { CommonActions } from "@react-navigation/native";
+
 import * as Authentication from "../../firebase/auth";
+import db from '../../firebase/firestore';
 
 export const RegisterScreen = ({navigation}) => {
     const [username, setUsername] = useState('');
@@ -11,12 +13,18 @@ export const RegisterScreen = ({navigation}) => {
     const onRegisterPress = () => {
         Authentication.createAccount(
           { name: username, email, password },
-          (user) => navigation.dispatch(CommonActions.reset({
-            index: 0,
-            routes: [{
-              name: "Home"
-            }]
-          })),
+          (user) => {
+              db.collection('USERS')
+                .doc(user.uid)
+                .set({});
+
+              return navigation.dispatch(CommonActions.reset({
+                  index: 0,
+                  routes: [{
+                      name: "Home"
+                  }]
+                }));
+          },
           (error) => {
             return alert(error);
           }

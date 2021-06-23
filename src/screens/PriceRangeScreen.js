@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-elements';
 
-import {getCurrentUserId} from '../../firebase/auth';
+import * as Authentication from '../../firebase/auth';
 import * as Database from '../../firebase/database';
 
 import { search } from '../../yelp/config';
 
 import { selectPin, selectStart } from '../redux/sessionSlice';
 import { selectLocation, selectDietary, selectDining } from '../redux/filterOptionsSlice';
+import db from '../../firebase/firestore';
 
 export const PriceRangeScreen = ({navigation}) => {
 
@@ -21,22 +22,63 @@ export const PriceRangeScreen = ({navigation}) => {
     const [rating, setRating] = useState(0);
     const [userId, setUserId] = useState('');
 
+
+    const createChat = () => {
+        const displayName = Authentication.getCurrentUserName();
+
+        db.collection('THREADS')
+          .doc(pin)
+          .set({
+            name: 'Room',
+            latestMessage: {
+                text: `You have joined a new room created by ${displayName}.`,
+                createdAt: new Date().getTime()
+            },
+            creator: displayName
+          })
+        
+        db.collection('THREADS')
+          .doc(pin)
+          .collection('MESSAGES')
+            .add({
+                text: `You have joined a new room created by ${displayName}.`,
+                createdAt: new Date().getTime(),
+                system: true
+            });
+
+        db.collection('USERS')
+          .doc(userId)
+          .collection('chats')
+          .doc(pin)
+          .set({});
+    }
+
+    const joinChat = () => {
+        db.collection('USERS')
+          .doc(userId)
+          .collection('chats')
+          .doc(pin)
+          .set({});
+    }
+
     const onPressFinish = (navigation) => {
         if (start) {
-            Database.createRoom(pin, userId, location);
+            Database.createRoom(pin, userId, postalCode);
             const restaurants = search(dietaryOps, diningOps, location, rating);
             restaurants.then(res => {
                 Database.updateRestaurants(pin, res)
             });
+            createChat();
         } else {
             Database.joinRoom(pin, userId);
+            joinChat();
         }
         navigation.navigate('Swipe');
     }
 
     const DOLLAR = require('../../assets/images/rate.png')
 
-    useEffect(() => setUserId(getCurrentUserId()), [])
+    useEffect(() => setUserId(Authentication.getCurrentUserId()), [])
 
     return (
         <SafeAreaView style={styles.view}>
