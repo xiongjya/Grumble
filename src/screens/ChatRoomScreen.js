@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { GiftedChat, Bubble} from 'react-native-gifted-chat';
+import { GiftedChat, Avatar, Bubble} from 'react-native-gifted-chat';
 
 import * as Authentication from "../../firebase/auth";
 import db from '../../firebase/firestore';
@@ -24,7 +24,8 @@ export const ChatRoomScreen = ({ route, navigation }) => {
                 createdAt: new Date().getTime(),
                 user: {
                     _id: currentUser.uid,
-                    email: currentUser.email
+                    email: currentUser.email,
+                    photo: currentUser.photoURL
                 }
             })
             .catch(error => {
@@ -94,7 +95,7 @@ export const ChatRoomScreen = ({ route, navigation }) => {
                 }}
                 textStyle={{
                     right: {
-                        color: '#fff'
+                        color: '#ffffff'
                     }
                 }}
             />
@@ -137,7 +138,7 @@ export const ChatRoomScreen = ({ route, navigation }) => {
             renderLoading={renderLoading}
             scrollToBottom
             scrollToBottomComponent={scrollToBottom}
-            user={{ _id: currentUser.uid }}
+            user={{ _id: currentUser.uid, name: currentUser.displayName, avatar: currentUser.photoURL }}
         />
     )
 }

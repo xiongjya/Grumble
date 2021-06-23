@@ -15,7 +15,7 @@ export const createAccount = async ({ name, email, password }, onSuccess, onErro
   try {
     const { user } = await auth.createUserWithEmailAndPassword(email, password);
     if (user) {
-      await user.updateProfile({ displayName: name });
+      await user.updateProfile({ displayName: name, photoURL: 'https://img.flaticon.com/icons/png/512/149/149071.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF' });
       return onSuccess(user);
     }
   } catch (error) {
@@ -41,11 +41,25 @@ export const forgotPassword = async ( {email} , onSuccess, onError) => {
   }
 }
 
+export const changePhoto = async ({ photo }, onSuccess, onError) => {
+  try {
+    await auth.currentUser.updateProfile({
+      displayName: auth.currentUser.displayName,
+      photoURL: photo
+    })
+    return onSuccess();
+  } catch (error) {
+    return onError(error);
+  }
+}
+
 export const getCurrentUserId = () => auth.currentUser ? auth.currentUser.uid : null;
 
 export const getCurrentUserName = () => auth.currentUser ? auth.currentUser.displayName : null;
 
 export const getCurrentUserObject = () => auth.currentUser ? auth.currentUser.toJSON() : null;
+
+export const getCurrentUserPhoto = () => auth.currentUser ? auth.currentUser.photoURL : null;
 
 export const setOnAuthStateChanged = (onUserAuthenticated, onUserNotFound) => auth.onAuthStateChanged((user) => {
   if (user) {
