@@ -8,20 +8,12 @@ export const Options = ({
     const op = arr.map((x, index) => {
         return (
             <View style={styles.op} key={index}>
-              {x.offer && (<Icon
+              <Icon
                 name='check'
                 type='font-awesome-5'
                 color='#6aa84f'
-                iconStyle={{fontSize: 13}}
-              />)}
-
-              {!x.offer && (<Icon
-                name='times'
-                type='font-awesome-5'
-                color='#cc0000'
-                iconStyle={{fontSize: 13}}
-              />)}
-              <Text> {x.option}     </Text>
+                iconStyle={{fontSize: 13}}/>
+              <Text> {x} </Text>
             </View>
           )
     })

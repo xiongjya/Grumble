@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, View, ActivityIndicator } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import { CardItem } from '../components/CardItem.js';
-import mock from '../../assets/data/mock.js';
 
 import { DietaryOpsScreen } from './DietaryOpsScreen';
 import { DiningOpsScreen } from './DiningOpsScreen';
@@ -18,53 +17,66 @@ import { database } from '../../firebase/database';
 import { selectPin } from '../redux/sessionSlice';
 import { useSelector } from 'react-redux';
 
-
-
 const SwipeScreen = () => {
-    const [selected, setSelected] = useState([]);
-    const [location, setLocation] = useState('');
+    const [restaurants, setRestaurants] = useState([]);
+    const [isLoading, setisLoading] = useState(true);
     const pin = useSelector(selectPin);
 
-    const getData = async () => {
-        await database.ref('rooms/' + pin ).once('value',
-        (snap) => { setLocation(snap.val().location) });
-    }
-
+    
+    const loading = (
+        <View style= {styles.loadingView}>
+            <ActivityIndicator size="large" color="#ffffff"/>
+        </View>
+    );
+    
+        
     useEffect(() => {
-            try { getData() }
-            catch (error) {alert (error)}
-        }, [])
+        const resRef = database.ref('rooms/' + pin + '/restaurants');
+        const handleData = (snap) => {
+            const restaurants = [];
+            snap.forEach((res) => {
+            restaurants.push(res.val());
+            });
+    
+            if (restaurants) {
+            setRestaurants(restaurants);
+            }
+        };
+    
+        resRef.once('value', handleData, (error) => alert(error));
+        setTimeout(() => setisLoading(false), 1000);
+
+        return () => {
+            resRef.off('value', handleData);
+        };
+        }, []);
 
     return (
         <ImageBackground
             source={require('../../assets/images/background.png')}
             style={styles.background}
         >
-        <SafeAreaView style={styles.container}>
-            <CardStack
-                loop={true}
-                verticalSwipe={false}
-                renderNoMoreCards={() => null}
-            >
-            
-                {mock.map((item, index) => (
-                    <Card key={index} onSwipedRight={ () => { setSelected(() => selected.push(item.name)) } }>
-                        <CardItem
-                            address={item.address}
-                            contact={item.contact}
-                            image={item.image}
-                            menu={item.menu}
-                            name={item.name}
-                            operation={item.operation}
-                            options={item.options}
-                            reviews={item.reviews}
-                            website={item.website}
-                        />
-                    </Card>
-                ))}
-            </CardStack>
-            <Text> {location} </Text>
-        </SafeAreaView>
+            <SafeAreaView style={styles.container}>
+                {isLoading && loading}
+                {!isLoading &&
+                <CardStack
+                    loop={true}
+                    verticalSwipe={false}
+                    renderNoMoreCards={() => null}
+                >
+                    {restaurants.map((item, index) => {
+                        return (
+                        <Card key={index}>
+                            <CardItem address= {item.location.address1}
+                                        contact= {item.phone}
+                                        image_url= {item.image_url}
+                                        name= {item.name}
+                                        website= {item.url}
+                            />
+                        </Card>)
+                    })}
+                </CardStack>}
+            </SafeAreaView>
         </ImageBackground>
   );
 };
@@ -88,12 +100,21 @@ export const SwipeSession = () => {
     )
 }
 
+const FULL_WIDTH = Dimensions.get('window').width
+const FULL_HEIGHT = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
     container: {
         margin: 10
     },
+    loadingView: {
+        width: FULL_WIDTH,
+        height: FULL_HEIGHT,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     background: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+        width: FULL_WIDTH,
+        height: FULL_HEIGHT
     }
 })

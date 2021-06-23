@@ -6,18 +6,15 @@ import { Options } from '../components/Options.js';
 export const CardItem = ({
   address,
   contact,
-  image,
+  image_url,
   name,
-  operation, 
-  options,
-  reviews,
   website
 }) => {
   const [information, setInformation] = useState(true);
 
   return (
     <View style={styles.containerCardItem}>
-      <Image source={image} style={styles.image}/>
+      <Image source={{uri: image_url}} style={styles.image}/>
 
       <TouchableOpacity 
         style={styles.info}
@@ -25,7 +22,7 @@ export const CardItem = ({
         <Icon
           name='info'
           type='feather'
-          color='#434343'
+          color='#ffffff'
         />
       </TouchableOpacity>
 
@@ -42,12 +39,10 @@ export const CardItem = ({
           </Text>
 
           <Text style={[styles.operation, styles.padding]}>
-            <Text style={{fontWeight: 'normal'}}>Operation hours: </Text>
+            <Text style={{fontWeight: 'normal'}}>is closed: </Text>
 
-             {operation} 
           </Text>
 
-          <Options arr={options}/>
         </ScrollView>
       ) : (
           <ScrollView
@@ -61,17 +56,10 @@ export const CardItem = ({
                 onPress={() => Linking.openURL(website)}>
                 <Text style={styles.website}>{website}</Text>
               </TouchableOpacity>
-            </View>
-
-            <View style={styles.padding}>
-              <Text>Reviews:</Text>
-
-              <Text style={styles.reviews}>{reviews}</Text>
-            </View>
-            
+            </View>    
           </ScrollView>
       )}
-      
+
     </View>
   );
 };

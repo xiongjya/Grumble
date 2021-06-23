@@ -6,28 +6,32 @@ import { Rating } from 'react-native-elements';
 import {getCurrentUserId} from '../../firebase/auth';
 import * as Database from '../../firebase/database';
 
+import { search } from '../../yelp/config';
+
 import { selectPin, selectStart } from '../redux/sessionSlice';
-import { addRating, selectLocation } from '../redux/filterOptionsSlice';
+import { selectLocation, selectDietary, selectDining } from '../redux/filterOptionsSlice';
 
 export const PriceRangeScreen = ({navigation}) => {
-    const dispatch = useDispatch();
+
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
-    const postalCode = useSelector(selectLocation);
+    const dietaryOps = useSelector(selectDietary);
+    const diningOps = useSelector(selectDining);
+    const location = useSelector(selectLocation);
     const [rating, setRating] = useState(0);
     const [userId, setUserId] = useState('');
 
-    const ratingCompleted = (value) => {
-        setRating(value);
-        dispatch(addRating(value));
-    }
-
-    const onPressFinish = () => {
+    const onPressFinish = (navigation) => {
         if (start) {
-            Database.createRoom(pin, userId, postalCode);
+            Database.createRoom(pin, userId, location);
+            const restaurants = search(dietaryOps, diningOps, location, rating);
+            restaurants.then(res => {
+                Database.updateRestaurants(pin, res)
+            });
         } else {
             Database.joinRoom(pin, userId);
         }
+        navigation.navigate('Swipe');
     }
 
     const DOLLAR = require('../../assets/images/rate.png')
@@ -49,18 +53,19 @@ export const PriceRangeScreen = ({navigation}) => {
                 type='custom'
                 ratingImage={DOLLAR}
                 ratingColor='#ffffff'
+                ratingCount={4}
                 ratingBackgroundColor='#ffd966'
                 tintColor='#ff5733'
                 imageSize={55}
-                onFinishRating={ratingCompleted}
+                onFinishRating={value => setRating(value)}
+                minValue={1}
                 startingValue={0}
                 style={styles.rating}
             />
             <TouchableOpacity 
                 style={styles.fin}
                 onPress={() => {
-                    onPressFinish();
-                    navigation.navigate('Swipe');
+                    onPressFinish(navigation);
                 }}
             >
                 <Text style={styles.finText}> FINISH </Text>

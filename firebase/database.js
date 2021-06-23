@@ -4,8 +4,8 @@ export const database = firebase.database();
 
 //string sessionCode, int usersJoined (ppl in room),
 // int usersDone (ppl done swiping), int[] userIDs
-export const createRoom = async (sessionCode, userID
-            ,location) => {
+export const createRoom = async (sessionCode, userID,
+            location) => {
     try {
         await database
             .ref('rooms/' + sessionCode)
@@ -41,5 +41,14 @@ export const joinRoom = async (sessionCode, userID) => {
         })
     } catch (error) {
         alert(error)
+    }
+}
+
+export const updateRestaurants = async (sessionCode, restaurants) => {
+    for (let i = 0, len = restaurants.length; i < len; i++) {
+      await firebase
+        .database()
+        .ref('rooms/' + sessionCode + '/restaurants/' + restaurants[i].id)
+        .set({ ...restaurants[i], yes: 0, no: 0 });
     }
 }
