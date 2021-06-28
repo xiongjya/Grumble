@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import {
-    Image, Keyboard, KeyboardAvoidingView, StyleSheet,
+    Keyboard, KeyboardAvoidingView, StyleSheet,
     Text, TextInput, TouchableOpacity,
-    TouchableWithoutFeedback, View, Animated, Easing
+    TouchableWithoutFeedback, View, Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CommonActions } from "@react-navigation/native";

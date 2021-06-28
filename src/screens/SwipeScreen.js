@@ -9,17 +9,18 @@ import { LocationScreen } from './LocationScreen';
 import { PriceRangeScreen } from './PriceRangeScreen';
 import { SessionCodeScreen } from './SessionCodeScreen';
 import { StartScreen } from './StartScreen';
+import { ResultsScreen } from './ResultsScreen';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { database } from '../../firebase/database';
+import { database, swipeRestaurant, markUserDone } from '../../firebase/database';
 
 import { selectPin } from '../redux/sessionSlice';
 import { useSelector } from 'react-redux';
 
-const SwipeScreen = () => {
+const SwipeScreen = ({navigation}) => {
     const [restaurants, setRestaurants] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setisLoading] = useState(true);
     const [mounted, setMounted] = useState(false);
     const pin = useSelector(selectPin);
 
@@ -49,7 +50,7 @@ const SwipeScreen = () => {
         };
     
         resRef.once('value', handleData, (error) => alert(error));
-        setTimeout(() => setIsLoading(false), 1000);
+        setTimeout(() => setisLoading(false), 1000);
 
         return () => {
             resRef.off('value', handleData);
@@ -57,22 +58,31 @@ const SwipeScreen = () => {
         };
     }, []);
 
-    return isLoading 
-        ? loading 
-        : (
-            <ImageBackground
-                source={require('../../assets/images/background.png')}
-                style={styles.background}
-            >
-                <SafeAreaView style={styles.container}>
+    return (
+        <ImageBackground
+        source={require('../../assets/images/background.png')}
+        style={styles.background}>
+            <SafeAreaView style={styles.container}>
+                {isLoading && loading}
+                {!isLoading && (
                     <CardStack
-                        loop={true}
+                        loop={false}
                         verticalSwipe={false}
-                        renderNoMoreCards={() => null}
+                        renderNoMoreCards={()=>{}}
                     >
-                        {restaurants.map((item, index) => {
-                            return (
-                            <Card key={index}>
+                    {restaurants.map((item, index) => {
+                        const onSwipe = (last, right) => swipeRestaurant(pin, item.id,
+                                                    last, right, () => {
+                                                        navigation.navigate('Results');
+                                                    });
+                        let isLast = false;
+                        if (!isLoading && index === restaurants.length - 1) {
+                            isLast = true;
+                        }
+                        return (
+                        <Card key={index}
+                            onSwipedLeft={() => onSwipe(isLast, false)}
+                            onSwipedRight={() => onSwipe(isLast, true)}>
                                 <CardItem address={item.location.address1}
                                             categories={item.categories}
                                             contact={item.phone}
@@ -85,10 +95,12 @@ const SwipeScreen = () => {
                                 />
                             </Card>)
                         })}
-                    </CardStack>
-                </SafeAreaView>
-            </ImageBackground>);
-    };
+                    </CardStack>)
+                }
+            </SafeAreaView>
+        </ImageBackground>
+        );
+    }
 
 const Stack = createStackNavigator();
 
@@ -105,6 +117,7 @@ export const SwipeSession = () => {
             <Stack.Screen name="DietaryOps" component={ DietaryOpsScreen } />
             <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
             <Stack.Screen name="Swipe" component={ SwipeScreen } />
+            <Stack.Screen name="Results" component={ ResultsScreen } />
         </Stack.Navigator>
     )
 }
@@ -114,7 +127,7 @@ const FULL_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
-        margin: 10
+        margin:10
     },
     loadingView: {
         width: FULL_WIDTH,

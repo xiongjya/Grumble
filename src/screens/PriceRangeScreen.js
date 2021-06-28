@@ -65,20 +65,17 @@ export const PriceRangeScreen = ({navigation}) => {
 
     const onPressFinish = (navigation) => {
         if (start) {
-            Database.createRoom(pin, userId, location);
-
+            Database.createRoom(pin, userId);
             const restaurants = search(dietaryOps, diningOps, latitude, longitude, location, radius, price);
-            
             restaurants.then(res => {
-                Database.updateRestaurants(pin, res)
-            });
+                Database.updateRestaurants(pin, res, () => { navigation.navigate('Swipe') })
+            })
             createChat();
         } else {
             Database.joinRoom(pin, userId);
             joinChat();
+            navigation.navigate('Swipe');
         }
-
-        navigation.navigate('Swipe');
     }
 
     const DOLLAR = require('../../assets/images/rate.png')

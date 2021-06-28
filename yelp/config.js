@@ -18,7 +18,7 @@ export const search = async (dietOps, diningOps, latitude, longitude, location, 
 
     const params = {
         categories: dietOps,
-        limit: 50,
+        limit: 10,
         price: getPrices(priceCeil),
         radius: radius,
         term: 'restaurants'
