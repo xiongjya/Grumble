@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { Dimensions, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { Options } from '../components/Options.js';
 
 export const CardItem = ({
   address,
+  categories,
   contact,
   image_url,
   name,
+  price,
+  rating,
+  transactions,
   website
 }) => {
   const [information, setInformation] = useState(true);
+
+  console.log(categories);
+  console.log(transactions);
 
   return (
     <View style={styles.containerCardItem}>
@@ -38,10 +44,28 @@ export const CardItem = ({
             {contact}
           </Text>
 
-          <Text style={[styles.operation, styles.padding]}>
-            <Text style={{fontWeight: 'normal'}}>is closed: </Text>
+          <Text style={[styles.hours, styles.padding]}>
+            <Text style={{fontWeight: 'normal'}}>Hours: </Text>
 
           </Text>
+
+          <Text style={[styles.hours, styles.padding, { paddingTop: 25}]}>
+            <Text style={{fontWeight: 'normal'}}>Price: </Text>
+            
+            {price}
+          </Text>
+
+          <View style={styles.option}>
+            <Text>Transactions: </Text>
+
+            <Text style={{fontWeight: 'bold'}}>{transactions}</Text>
+          </View>  
+
+          <View style={styles.option}>
+            <Text>Categories: </Text>
+
+            <Text style={{fontWeight: 'bold'}}>{categories.alias}</Text>
+          </View> 
 
         </ScrollView>
       ) : (
@@ -49,7 +73,13 @@ export const CardItem = ({
             style={styles.description}
             contentContainerStyle={{justifyContent: 'center'}}
           >
-            <View style={[styles.padding, {flexDirection: 'row'}]}>
+            <Text style={[styles.hours, styles.padding]}>
+              <Text style={{fontWeight: 'normal'}}>Rating: </Text>
+
+              {rating}
+            </Text>  
+
+            <View style={[styles.padding, {flexDirection: 'row', flexWrap: 'wrap'}]}>
               <Text>Website: </Text>
 
               <TouchableOpacity 
@@ -86,6 +116,9 @@ const styles = StyleSheet.create({
     description: {
       marginLeft: 15
     },
+    hours: {
+      fontWeight: 'bold',
+    },
     image: {
       borderRadius: 10,
       width: fullWidth - 60,
@@ -105,12 +138,15 @@ const styles = StyleSheet.create({
       color: '#363636',
       fontSize: 35,
       fontWeight: 'bold',
-    }, 
-    operation: {
-      fontWeight: 'bold',
     },
     op: {
-      paddingTop: 1,
+      flexDirection: 'row',
+      marginLeft: 1,
+    },
+    option: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      padding: 1
     },
     padding: {
       padding: 1,

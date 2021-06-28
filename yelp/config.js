@@ -1,6 +1,4 @@
-
 import axios from "axios";
-
 
 const yelp = axios.create({
     baseURL : "https://api.yelp.com/v3/businesses",
@@ -9,10 +7,7 @@ const yelp = axios.create({
     }
 });
 
-export const search = async (dietOps, diningOps, location, priceCeil) => {
-    const categories = '&categories=' + dietOps
-                                            .map(x => x.replace(' ', '').toLowerCase())
-                                            .toString();
+export const search = async (dietOps, diningOps, latitude, longitude, location, radius, priceCeil) => {
     const getPrices = x => {
         const arr = [];
         for (let i = 1; i <= x; i++) {
@@ -20,20 +15,27 @@ export const search = async (dietOps, diningOps, location, priceCeil) => {
         }
         return arr.toString();
     }
-    const price = '&price=' + getPrices(priceCeil)
+
+    const params = {
+        categories: dietOps,
+        limit: 50,
+        price: getPrices(priceCeil),
+        radius: radius,
+        term: 'restaurants'
+    };
+
+    if (location) {
+        params.location = location;
+    } else {
+        params.latitude = latitude;
+        params.longitude = longitude;
+    }
+
     try {
-        const url = `/search?locale=en_SG&categories=restaurants`;
-        alert(url);
-      const response = await yelp.get('/search', {
-        params: {
-            limit: 50,
-            term: 'pasta',
-            location: 'san jose'
-        }
-        });
-    console.log(response.data.businesses)
-      return response.data.businesses;
+        const response = await yelp.get('/search', { params });
+        
+        return response.data.businesses;
     } catch (err) {
-      alert(err);
+        alert(err);
     }
 };

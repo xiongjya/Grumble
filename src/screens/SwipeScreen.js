@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import { CardItem } from '../components/CardItem.js';
 
@@ -19,67 +19,76 @@ import { useSelector } from 'react-redux';
 
 const SwipeScreen = () => {
     const [restaurants, setRestaurants] = useState([]);
-    const [isLoading, setisLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [mounted, setMounted] = useState(false);
     const pin = useSelector(selectPin);
 
-    
     const loading = (
-        <View style= {styles.loadingView}>
+        <SafeAreaView style= {styles.loadingView}>
             <ActivityIndicator size="large" color="#ffffff"/>
-        </View>
+        </SafeAreaView>
     );
-    
         
     useEffect(() => {
+        setMounted(true);
+
         const resRef = database.ref('rooms/' + pin + '/restaurants');
         const handleData = (snap) => {
             const restaurants = [];
-            snap.forEach((res) => {
-            restaurants.push(res.val());
-            });
-    
-            if (restaurants) {
-            setRestaurants(restaurants);
+
+            if (mounted) {
+                snap.forEach((res) => {
+                    restaurants.push(res.val());
+                });
+        
+                if (restaurants) {
+                    setRestaurants(restaurants);
+                }
             }
+
         };
     
         resRef.once('value', handleData, (error) => alert(error));
-        setTimeout(() => setisLoading(false), 1000);
+        setTimeout(() => setIsLoading(false), 1000);
 
         return () => {
             resRef.off('value', handleData);
+            setMounted(false);
         };
-        }, []);
+    }, []);
 
-    return (
-        <ImageBackground
-            source={require('../../assets/images/background.png')}
-            style={styles.background}
-        >
-            <SafeAreaView style={styles.container}>
-                {isLoading && loading}
-                {!isLoading &&
-                <CardStack
-                    loop={true}
-                    verticalSwipe={false}
-                    renderNoMoreCards={() => null}
-                >
-                    {restaurants.map((item, index) => {
-                        return (
-                        <Card key={index}>
-                            <CardItem address= {item.location.address1}
-                                        contact= {item.phone}
-                                        image_url= {item.image_url}
-                                        name= {item.name}
-                                        website= {item.url}
-                            />
-                        </Card>)
-                    })}
-                </CardStack>}
-            </SafeAreaView>
-        </ImageBackground>
-  );
-};
+    return isLoading 
+        ? loading 
+        : (
+            <ImageBackground
+                source={require('../../assets/images/background.png')}
+                style={styles.background}
+            >
+                <SafeAreaView style={styles.container}>
+                    <CardStack
+                        loop={true}
+                        verticalSwipe={false}
+                        renderNoMoreCards={() => null}
+                    >
+                        {restaurants.map((item, index) => {
+                            return (
+                            <Card key={index}>
+                                <CardItem address={item.location.address1}
+                                            categories={item.categories}
+                                            contact={item.phone}
+                                            image_url={item.image_url}
+                                            name={item.name}
+                                            price={item.price}
+                                            rating={item.rating}
+                                            transactions={item.transactions}
+                                            website={item.url}
+                                />
+                            </Card>)
+                        })}
+                    </CardStack>
+                </SafeAreaView>
+            </ImageBackground>);
+    };
 
 const Stack = createStackNavigator();
 
@@ -111,7 +120,8 @@ const styles = StyleSheet.create({
         width: FULL_WIDTH,
         height: FULL_HEIGHT,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#ffd966'
     },
     background: {
         width: FULL_WIDTH,

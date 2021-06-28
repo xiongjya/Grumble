@@ -9,7 +9,7 @@ import * as Database from '../../firebase/database';
 import { search } from '../../yelp/config';
 
 import { selectPin, selectStart } from '../redux/sessionSlice';
-import { selectLocation, selectDietary, selectDining } from '../redux/filterOptionsSlice';
+import { selectLatitude, selectLongitude, selectLocation, selectDistance, selectDietary, selectDining } from '../redux/filterOptionsSlice';
 import db from '../../firebase/firestore';
 
 export const PriceRangeScreen = ({navigation}) => {
@@ -18,10 +18,12 @@ export const PriceRangeScreen = ({navigation}) => {
     const pin = useSelector(selectPin);
     const dietaryOps = useSelector(selectDietary);
     const diningOps = useSelector(selectDining);
+    const latitude = useSelector(selectLatitude);
+    const longitude = useSelector(selectLongitude);
     const location = useSelector(selectLocation);
-    const [rating, setRating] = useState(0);
+    const radius = useSelector(selectDistance);
+    const [price, setPrice] = useState(0);
     const [userId, setUserId] = useState('');
-
 
     const createChat = () => {
         const displayName = Authentication.getCurrentUserName();
@@ -63,8 +65,10 @@ export const PriceRangeScreen = ({navigation}) => {
 
     const onPressFinish = (navigation) => {
         if (start) {
-            Database.createRoom(pin, userId, postalCode);
-            const restaurants = search(dietaryOps, diningOps, location, rating);
+            Database.createRoom(pin, userId, location);
+
+            const restaurants = search(dietaryOps, diningOps, latitude, longitude, location, radius, price);
+            
             restaurants.then(res => {
                 Database.updateRestaurants(pin, res)
             });
@@ -73,6 +77,7 @@ export const PriceRangeScreen = ({navigation}) => {
             Database.joinRoom(pin, userId);
             joinChat();
         }
+
         navigation.navigate('Swipe');
     }
 
@@ -99,10 +104,10 @@ export const PriceRangeScreen = ({navigation}) => {
                 ratingBackgroundColor='#ffd966'
                 tintColor='#ff5733'
                 imageSize={55}
-                onFinishRating={value => setRating(value)}
+                onFinishRating={value => setPrice(value)}
                 minValue={1}
                 startingValue={0}
-                style={styles.rating}
+                style={styles.price}
             />
             <TouchableOpacity 
                 style={styles.fin}
@@ -152,7 +157,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 30
     },
-    rating: {
+    price: {
         marginBottom: 30,
     },
     sessionCode: {

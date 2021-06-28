@@ -1,25 +1,67 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 
 import { selectPin } from '../redux/sessionSlice';
-import { addDistance, addLocation } from '../redux/filterOptionsSlice';
+import { addLatitude, addLongitude, addLocation, addDistance } from '../redux/filterOptionsSlice';
+
+import * as Location from 'expo-location';
 
 export const LocationScreen = ({navigation}) => {
     const dispatch = useDispatch();
     const pin = useSelector(selectPin);
-    const [postalCode, setPostalCode] = useState('');
-    const [distance, setDistance] = useState(0.5);
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
+    const [currLocation, setCurrLocation] = useState(false);
+    const [filledLocation, setFilledLocation] = useState('');
+    const [radius, setRadius] = useState(0.5);
 
-    const onDistanceChange = (value) => {
-        setDistance(value.toFixed(1));
+    const getCurrentLocation = async () => {
+        const enabled = await Location.hasServicesEnabledAsync();
+
+        if (enabled) {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+
+            if (status !== 'granted') {
+                alert('Permission to access location was denied');
+            } else {
+                const location = await Location.getCurrentPositionAsync({});
+
+                setCurrLocation(true);
+                setLatitude(location.coords.latitude);
+                setLongitude(location.coords.longitude);
+
+                setTimeout(() => {}, 3000);
+            }
+        } else {
+            alert('Location service not enabled, please enable your location services in Settings to continue.');
+        }
+    };
+
+    const onAddressFill = (text) => {
+        setFilledLocation(text);
     }
 
+    const onRadiusChange = (value) => {
+        setRadius(value.toFixed(1));
+    };
+
     const onPressNext = () => {
-        dispatch(addLocation(postalCode));
-        dispatch(addDistance(distance));
-        navigation.navigate('DiningOps');
+        if (currLocation || filledLocation) {
+            if (currLocation) {
+                dispatch(addLatitude(latitude));
+                dispatch(addLongitude(longitude));
+            } else {
+                dispatch(addLocation(filledLocation));
+            }
+            
+            dispatch(addDistance(radius * 1000));
+            navigation.navigate('DiningOps');
+
+        } else {
+            alert('Empty fields, either use your current location or enter an address.');
+        }
     };
 
     return (
@@ -30,26 +72,31 @@ export const LocationScreen = ({navigation}) => {
                 <Text style={styles.sessionCode}>PIN: {pin}</Text>
 
                 <Text style= {styles.qnNumber}>1/4</Text>
+
                 <Text style= {styles.question}>
                     Choose your location:
                 </Text>
-                <TouchableOpacity style= {styles.useMyLocation}>
+                <TouchableOpacity 
+                    onPress={getCurrentLocation}
+                    style= {styles.useMyLocation}
+                >
                     <Text style= {styles.text}>
                         Use my location
                     </Text>
                 </TouchableOpacity>
+
                 <Text style= {styles.orText}>OR</Text>
                 <View style= {styles.enterPC}>
                     <TextInput
-                        onChangeText={text => setPostalCode(text)}
-                        placeholder='Enter postal code'
+                        onChangeText={onAddressFill}
+                        placeholder='Enter address'
                         style={styles.text}
-                        value={postalCode}
+                        value={filledLocation}
                         selectionColor='#fac219'
                     />
                 </View>
-                <Text style= {styles.question}>
-                    Distance radius: {distance}
+                <Text style={styles.question}>
+                    Distance radius: {radius}km
                 </Text>
                 <Slider
                     style={{width: '70%', height: 40}}
@@ -57,7 +104,7 @@ export const LocationScreen = ({navigation}) => {
                     maximumValue={5}
                     minimumTrackTintColor="#FFFFFF"
                     maximumTrackTintColor="#rgba(255, 255, 255, 0.4)"
-                    onValueChange={onDistanceChange}
+                    onValueChange={onRadiusChange}
                 />
                 <View style={styles.dist}>
                     <Text style= {{color: '#ffffff', fontSize: 14}}>0.5km</Text>

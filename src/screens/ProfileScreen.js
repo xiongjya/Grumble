@@ -162,27 +162,27 @@ export const ProfileScreen = ({navigation}) => {
             onBackdropPress={() => Keyboard.dismiss()}
             overlayStyle={[styles.photoContainer, {height: 150}]}
           >
-            <View style={{alignItems: 'center', justifyContent: 'center-between', flexDirection: 'row'}}>
-              <TouchableOpacity 
-                onPress={() => uploadPhoto(url)}
-                style={{marginHorizontal: 30, marginBottom: 15}}
-              >
-                <Text style={styles.photoText}>Done</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                onPress={() => setUpload(!upload)}
-                style={{marginHorizontal: 30, marginBottom: 15}}
-              >
-                <Text style={[styles.photoText, {color: 'dimgray', fontWeight: 'normal'}]}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-
             <TextInput
               placeholder='Enter the url of your desired image...'
               value={url}
               onChangeText={setUrl}
             />
+
+            <View style={{alignItems: 'center', justifyContent: 'center-between', flexDirection: 'row'}}>
+              <TouchableOpacity 
+                onPress={() => setUpload(!upload)}
+                style={{marginHorizontal: 30, marginTop: 30}}
+              >
+                <Text style={[styles.photoText, {color: 'dimgray', fontWeight: 'normal'}]}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                onPress={() => uploadPhoto(url)}
+                style={{marginHorizontal: 30, marginTop: 30}}
+              >
+                <Text style={styles.photoText}>Done</Text>
+              </TouchableOpacity>
+            </View>
           </Overlay>
           
           <View style={styles.body}>

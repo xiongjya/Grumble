@@ -19,9 +19,9 @@ const MyButton = (props) => {
         setDisabled(!disabled);
 
         if (disabled) {
-            dispatch(removeDietary(props.option));
+            dispatch(removeDietary(props.name));
         } else {
-            dispatch(addDietary(props.option));
+            dispatch(addDietary(props.name));
         }
         
     }
@@ -57,37 +57,37 @@ export const DietaryOpsScreen = ({navigation}) => {
             </Text>
 
             <View style={styles.optionRow}>
-                <MyButton color={COLOR1} option='Chinese'/>
-                <MyButton color={COLOR1} option='Dessert'/>
-                <MyButton color={COLOR2} option='Fast food'/>
+                <MyButton color={COLOR1} option='Cafes' name='cafes'/>
+                <MyButton color={COLOR1} option='Chinese' name='chinese'/>
+                <MyButton color={COLOR2} option='Fast food' name='hotdogs'/>
             </View>
 
             <View style={styles.optionRow}>
-                <MyButton color={COLOR1} option='Indian'/>
-                <MyButton color={COLOR2} option='Japanese'/>
-                <MyButton color={COLOR3} option='Korean'/>
+                <MyButton color={COLOR1} option='Indian' name='indpak'/>
+                <MyButton color={COLOR2} option='Japanese' name='japanese'/>
+                <MyButton color={COLOR3} option='Kopitiam' name='kopitiam'/>
             </View>
 
             <View style={styles.optionRow}>
-                <MyButton color={COLOR2} option='Local'/>
-                <MyButton color={COLOR3} option='Mexican'/>
-                <MyButton color={COLOR4} option='Peranakan'/>
+                <MyButton color={COLOR2} option='Korean' name='korean'/>
+                <MyButton color={COLOR3} option='Malaysian' name='malaysian'/>
+                <MyButton color={COLOR4} option='Mexican' name='mexican'/>
             </View>
 
             <View style={styles.optionRow}>
-                <MyButton color={COLOR3} option='Thai'/>
-                <MyButton color={COLOR4} option='Vietnamese'/>
-                <MyButton color={COLOR3} option='Gluten-free'/>
+                <MyButton color={COLOR3} option='Thai' name='thai'/>
+                <MyButton color={COLOR4} option='Vietnamese' name='vietnamese'/>
+                <MyButton color={COLOR3} option='Gluten-Free' name='gluten_free'/>
             </View>
 
             <View style={styles.optionRow}>
-                <MyButton color={COLOR4} option='Halal'/>
-                <MyButton color={COLOR3} option='Seafood'/>
-                <MyButton color={COLOR2} option='Vegan'/>
+                <MyButton color={COLOR4} option='Halal' name='halal'/>
+                <MyButton color={COLOR3} option='Seafood' name='seafood'/>
+                <MyButton color={COLOR2} option='Vegan' name='vegan'/>
             </View>
 
             <View style={styles.optionRow}>
-                <MyButton color={COLOR2} option='Vegetarian'/>
+                <MyButton color={COLOR2} option='Vegetarian' name='vegetarian'/>
             </View>
 
             <TouchableOpacity 

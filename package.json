@@ -5,7 +5,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "test": "jest"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.0",
@@ -20,6 +21,7 @@
     "@reduxjs/toolkit": "^1.5.1",
     "axios": "^0.21.1",
     "expo": "~41.0.1",
+    "expo-location": "~12.0.4",
     "expo-status-bar": "~1.0.4",
     "firebase": "^8.6.2",
     "react": "16.13.1",
@@ -37,11 +39,19 @@
     "react-native-vector-icons": "^8.1.0",
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.4",
+    "react-test-renderer": "^17.0.2",
     "redux": "^4.1.0",
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.3"
+    "@babel/core": "^7.14.3",
+    "@testing-library/dom": "^8.0.0",
+    "@testing-library/jest-native": "^4.0.1",
+    "@testing-library/react-native": "^7.2.0",
+    "jest": "^27.0.5"
+  },
+  "jest": {
+    "preset": "react-native"
   },
   "private": true
 }

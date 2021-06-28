@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Dimensions, FlatList, Platform, SafeAreaView, 
     StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { Avatar, Button, Icon, ListItem, Overlay, SearchBar } from 'react-native-elements';
+import { Avatar, Button, FAB, Icon, ListItem, Overlay, SearchBar } from 'react-native-elements';
 import { Swipeable } from 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -13,12 +13,27 @@ const ChatScreen = ( {navigation} ) => {
     const [chatnames, setChatnames] = useState([]);
     const [initialChats, setInitialChats] = useState([]);
     const [chats, setChats] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [search, setSearch] = useState('');
+    const [pressed, setPressed] = useState(false);
 
     const [visible, setVisible] = useState(false);
     const [newName, setNewName] = useState('');
+
+    const loading = (
+        <SafeAreaView style= {styles.loadingView}>
+            <ActivityIndicator size="large" color="#ffffff"/>
+        </SafeAreaView>
+    );
+
+    const refresh = () => (
+        <Icon
+            name='refresh-cw'
+            type='feather'
+            color='#ffffff'
+        />
+    )
 
     const filtering = (text) => {
         setSearch(text);
@@ -193,48 +208,52 @@ const ChatScreen = ( {navigation} ) => {
                 setInitialChats(threads);
                 setChats(initialChats);
 
-                if (loading) {
-                    setLoading(false);
+                if (isLoading) {
+                    setIsLoading(false);
                 }
             });
         
         return () => unsubscribe();
-    }, [search]);
+    }, [pressed]);
     
-    return (
+    return isLoading
+            ? loading
+            : (
         <SafeAreaView style={styles.container}>
-            {loading ? (
-                <View style={{justifyContent: 'center'}}>
-                    <ActivityIndicator size='large' color='#be75e4' />
-                </View>
-            ) : (
-                <View>
-                    {Platform.OS === 'ios' ? (
-                        <SearchBar
-                        placeholder='Search'
-                        onChangeText={(text) => filtering(text)}
-                        value={search}
-                        containerStyle={styles.searchBar}
-                        inputContainerStyle={styles.textInputBar}
-                        round='true'
-                        platform='ios'
-                    />) : (
-                        <SearchBar
-                        placeholder='Search'
-                        onChangeText={(text) => filtering(text)}
-                        value={search}
-                        containerStyle={styles.searchBar}
-                        inputContainerStyle={styles.textInputBar}
-                        round='true'
-                    />)}
+            <View>
+                {Platform.OS === 'ios' ? (
+                    <SearchBar
+                    placeholder='Search'
+                    onChangeText={(text) => filtering(text)}
+                    value={search}
+                    containerStyle={styles.searchBar}
+                    inputContainerStyle={styles.textInputBar}
+                    round='true'
+                    platform='ios'
+                />) : (
+                    <SearchBar
+                    placeholder='Search'
+                    onChangeText={(text) => filtering(text)}
+                    value={search}
+                    containerStyle={styles.searchBar}
+                    inputContainerStyle={styles.textInputBar}
+                    round='true'
+                />)}
 
-                    <FlatList
-                        data={chats}
-                        renderItem={renderChat}
-                        keyExtractor={item => item._id}
-                    />
-                </View>
-            )}
+                <FlatList
+                    data={chats}
+                    renderItem={renderChat}
+                    keyExtractor={item => item._id}
+                />
+            </View>
+
+            <FAB 
+                color='#be75e4'
+                placement='right'
+                size='large'
+                icon={refresh}
+                onPress={() => setPressed(!pressed)}
+            />
         </SafeAreaView>
     )
 }
@@ -280,6 +299,10 @@ const styles = StyleSheet.create({
     },
     content: {
         justifyContent: 'flex-start'
+    },
+    loadingView: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     latestMessage: {
         color: '#888888',

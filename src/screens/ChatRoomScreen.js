@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { GiftedChat, Avatar, Bubble} from 'react-native-gifted-chat';
+import { GiftedChat, Bubble} from 'react-native-gifted-chat';
 
 import * as Authentication from "../../firebase/auth";
 import db from '../../firebase/firestore';
 
 export const ChatRoomScreen = ({ route, navigation }) => {
-    const currentUser = Authentication.getCurrentUserObject();
+    const [currentUser, setCurrentUser] = useState({});
     const { thread } = route.params;
 
     const [messages, setMessages] = useState([]);
@@ -51,6 +51,10 @@ export const ChatRoomScreen = ({ route, navigation }) => {
     }
     
     useEffect(() => {
+        const user = Authentication.getCurrentUserObject();
+
+        setCurrentUser(user);
+
         const messagesListener = db
             .collection('THREADS')
             .doc(thread._id)

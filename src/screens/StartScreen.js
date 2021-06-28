@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { KeyboardAvoidingView, Keyboard, 
     View, Text, TouchableOpacity, TouchableWithoutFeedback, 
@@ -6,11 +6,17 @@ import { KeyboardAvoidingView, Keyboard,
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { joined, setPin } from '../redux/sessionSlice';
+import { clearDietary, clearDining } from '../redux/filterOptionsSlice';
 
 export const StartScreen = ({navigation}) => {
     const dispatch = useDispatch();
 
     const [sessionPin, setSessionPin] = useState('');
+
+    useEffect(() => {
+        dispatch(clearDietary());
+        dispatch(clearDining());
+    })
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
