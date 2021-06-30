@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {
-    StyleSheet,
-    Text, View, Animated
-} from 'react-native';
-import { database } from '../../firebase/database';
-
-import { selectPin } from '../redux/sessionSlice';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
+
+import { database } from '../../../firebase/database';
+
+import { selectPin } from '../../redux/sessionSlice';
 
 export const ResultsScreen = () => {
     const [allDone, setAllDone] = useState(false);
@@ -14,8 +12,8 @@ export const ResultsScreen = () => {
     const [usersUndone, setUsersUndone] = useState(NaN);
     const pin = useSelector(selectPin);
 
-    const waiting = <Text style= {styles.text}> Waiting for {usersUndone} users... </Text>
-    const done = <Text style= {styles.text}>
+    const waiting = <Text style= {[text.normal, styles.margin]}> Waiting for {usersUndone} users... </Text>
+    const done = <Text style= {[text.normal, styles.margin]}>
                         Your top choice: {'\n' + top[0]}
                 </Text>
 
@@ -52,7 +50,7 @@ export const ResultsScreen = () => {
     }, []);
 
     return (
-        <View style= {styles.container}>
+        <View style={[common.container, common.vertical]}>
             {!allDone && waiting}
             {allDone && done}
         </View>
@@ -60,17 +58,7 @@ export const ResultsScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
-    text: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 20,
+    margin: {
         marginBottom: 20
     }
 })

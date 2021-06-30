@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
-import { CardItem } from '../components/CardItem.js';
+import { createStackNavigator } from '@react-navigation/stack';
+
+import { Loading } from '../../components/Loading';
+import { CardItem } from '../../components/CardItem.js';
 
 import { DietaryOpsScreen } from './DietaryOpsScreen';
 import { DiningOpsScreen } from './DiningOpsScreen';
@@ -11,11 +14,8 @@ import { SessionCodeScreen } from './SessionCodeScreen';
 import { StartScreen } from './StartScreen';
 import { ResultsScreen } from './ResultsScreen';
 
-import { createStackNavigator } from '@react-navigation/stack';
-
-import { database, swipeRestaurant, markUserDone } from '../../firebase/database';
-
-import { selectPin } from '../redux/sessionSlice';
+import { database, swipeRestaurant } from '../../../firebase/database';
+import { selectPin } from '../../redux/sessionSlice';
 import { useSelector } from 'react-redux';
 
 const SwipeScreen = ({navigation}) => {
@@ -23,12 +23,6 @@ const SwipeScreen = ({navigation}) => {
     const [isLoading, setisLoading] = useState(true);
     const [mounted, setMounted] = useState(false);
     const pin = useSelector(selectPin);
-
-    const loading = (
-        <SafeAreaView style= {styles.loadingView}>
-            <ActivityIndicator size="large" color="#ffffff"/>
-        </SafeAreaView>
-    );
         
     useEffect(() => {
         setMounted(true);
@@ -56,51 +50,50 @@ const SwipeScreen = ({navigation}) => {
             resRef.off('value', handleData);
             setMounted(false);
         };
-    }, []);
+    });
 
-    return (
-        <ImageBackground
-        source={require('../../assets/images/background.png')}
-        style={styles.background}>
-            <SafeAreaView style={styles.container}>
-                {isLoading && loading}
-                {!isLoading && (
+    return isLoading 
+        ? (<Loading />)
+        : (<ImageBackground
+            source={require('../../../assets/images/background.png')}
+            style={styles.background}>
+                <SafeAreaView style={styles.container}>
                     <CardStack
                         loop={false}
                         verticalSwipe={false}
                         renderNoMoreCards={()=>{}}
                     >
-                    {restaurants.map((item, index) => {
-                        const onSwipe = (last, right) => swipeRestaurant(pin, item.id,
-                                                    last, right, () => {
-                                                        navigation.navigate('Results');
-                                                    });
-                        let isLast = false;
-                        if (!isLoading && index === restaurants.length - 1) {
-                            isLast = true;
-                        }
-                        return (
-                        <Card key={index}
-                            onSwipedLeft={() => onSwipe(isLast, false)}
-                            onSwipedRight={() => onSwipe(isLast, true)}>
-                                <CardItem address={item.location.address1}
-                                            categories={item.categories}
-                                            contact={item.phone}
-                                            image_url={item.image_url}
-                                            name={item.name}
-                                            price={item.price}
-                                            rating={item.rating}
-                                            transactions={item.transactions}
-                                            website={item.url}
-                                />
-                            </Card>)
+                        {restaurants.map((item, index) => {
+                            const onSwipe = (last, right) => swipeRestaurant(pin, item.id,
+                                                        last, right, () => {
+                                                            navigation.navigate('Results');
+                                                        });
+                            let isLast = false;
+
+                            if (!isLoading && index === restaurants.length - 1) {
+                                isLast = true;
+                            }
+
+                            return (
+                                <Card key={index}
+                                    onSwipedLeft={() => onSwipe(isLast, false)}
+                                    onSwipedRight={() => onSwipe(isLast, true)}>
+                                        <CardItem address={item.location.address1}
+                                                categories={item.categories}
+                                                contact={item.phone}
+                                                image_url={item.image_url}
+                                                name={item.name}
+                                                price={item.price}
+                                                rating={item.rating}
+                                                transactions={item.transactions}
+                                                website={item.url}
+                                    />
+                                </Card>)
                         })}
-                    </CardStack>)
-                }
+                    </CardStack>
             </SafeAreaView>
-        </ImageBackground>
-        );
-    }
+        </ImageBackground>);
+}
 
 const Stack = createStackNavigator();
 
@@ -127,14 +120,7 @@ const FULL_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
-        margin:10
-    },
-    loadingView: {
-        width: FULL_WIDTH,
-        height: FULL_HEIGHT,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966'
+        margin: 10
     },
     background: {
         width: FULL_WIDTH,

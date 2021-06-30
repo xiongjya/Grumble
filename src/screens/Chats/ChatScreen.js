@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, Platform, SafeAreaView, 
+import { Dimensions, FlatList, Platform, SafeAreaView, 
     StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Avatar, Button, FAB, Icon, ListItem, Overlay, SearchBar } from 'react-native-elements';
 import { Swipeable } from 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { ChatRoomScreen } from './ChatRoomScreen';
-import * as Authentication from '../../firebase/auth';
-import db from '../../firebase/firestore';
+import { Loading } from '../../components/Loading';
+
+import * as Authentication from '../../../firebase/auth';
+import * as Firestore from '../../../firebase/firestore';
 
 const ChatScreen = ( {navigation} ) => {
     const [chatnames, setChatnames] = useState([]);
@@ -20,12 +22,6 @@ const ChatScreen = ( {navigation} ) => {
 
     const [visible, setVisible] = useState(false);
     const [newName, setNewName] = useState('');
-
-    const loading = (
-        <SafeAreaView style= {styles.loadingView}>
-            <ActivityIndicator size="large" color="#ffffff"/>
-        </SafeAreaView>
-    );
 
     const refresh = () => (
         <Icon
@@ -55,19 +51,9 @@ const ChatScreen = ( {navigation} ) => {
 
     const rightAction = ( id ) => {
         const handleDeletePress = () => {
-            db
-                .collection('THREADS')
-                .doc(id)
-                .delete();
-
-            db 
-                .collection('USERS')
-                .doc(Authentication.getCurrentUserId())
-                .collection('chats')
-                .doc(id)
-                .delete();
-
-            setSearch('');
+           Firestore.deleteChat(id, Authentication.getCurrentUserId());
+           
+           setSearch('');
         };
 
         return (
@@ -89,15 +75,10 @@ const ChatScreen = ( {navigation} ) => {
 
     const leftAction = ( oldname, id ) => {
         const handleRenamePress = () => {
-            db
-                .collection('THREADS')
-                .doc(id)
-                .update({
-                    name: newName
-                });
-
-            setNewName('');
-            setVisible(!visible);
+           Firestore.renameChat(id, newName);
+           
+           setNewName('');
+           setVisible(!visible);
         };
         
         return (
@@ -113,7 +94,7 @@ const ChatScreen = ( {navigation} ) => {
                             size={35}
                         />
                     }
-                    onPress={ () => setVisible(true)}
+                    onPress={ () => setVisible(true) }
                 />
 
                 <Overlay
@@ -154,7 +135,7 @@ const ChatScreen = ( {navigation} ) => {
                 containerStyle={styles.chat}
             >
                 <Avatar 
-                    source={require('../../assets/images/user.png')}
+                    source={require('../../../assets/images/user.png')}
                     rounded='true'
                     size='medium'
                 />
@@ -180,11 +161,11 @@ const ChatScreen = ( {navigation} ) => {
     useEffect(() => {
         const uid = Authentication.getCurrentUserId();
 
-        const unsubscribe = db
+        const unsubscribe = Firestore.db
             .collection('THREADS')
             .orderBy('latestMessage.createdAt', 'desc')
             .onSnapshot((querySnapshot) => {
-                db.collection('USERS')
+                Firestore.db.collection('USERS')
                     .doc(uid)
                     .collection('chats')
                     .onSnapshot((query) => {
@@ -212,51 +193,49 @@ const ChatScreen = ( {navigation} ) => {
                     setIsLoading(false);
                 }
             });
-        
+
         return () => unsubscribe();
     }, [pressed]);
     
     return isLoading
-            ? loading
-            : (
-        <SafeAreaView style={styles.container}>
-            <View>
-                {Platform.OS === 'ios' ? (
-                    <SearchBar
-                    placeholder='Search'
-                    onChangeText={(text) => filtering(text)}
-                    value={search}
-                    containerStyle={styles.searchBar}
-                    inputContainerStyle={styles.textInputBar}
-                    round='true'
-                    platform='ios'
-                />) : (
-                    <SearchBar
-                    placeholder='Search'
-                    onChangeText={(text) => filtering(text)}
-                    value={search}
-                    containerStyle={styles.searchBar}
-                    inputContainerStyle={styles.textInputBar}
-                    round='true'
-                />)}
+            ? (<Loading />)
+            : (<SafeAreaView style={styles.container}>
+                <View>
+                    {Platform.OS === 'ios' ? (
+                        <SearchBar
+                        placeholder='Search'
+                        onChangeText={(text) => filtering(text)}
+                        value={search}
+                        containerStyle={styles.searchBar}
+                        inputContainerStyle={styles.textInputBar}
+                        round='true'
+                        platform='ios'
+                    />) : (
+                        <SearchBar
+                        placeholder='Search'
+                        onChangeText={(text) => filtering(text)}
+                        value={search}
+                        containerStyle={styles.searchBar}
+                        inputContainerStyle={styles.textInputBar}
+                        round='true'
+                    />)}
 
-                <FlatList
-                    data={chats}
-                    renderItem={renderChat}
-                    keyExtractor={item => item._id}
+                    <FlatList
+                        data={chats}
+                        renderItem={renderChat}
+                        keyExtractor={item => item._id}
+                    />
+                </View>
+
+                <FAB 
+                    color='#be75e4'
+                    placement='right'
+                    size='large'
+                    icon={refresh}
+                    onPress={() => setPressed(!pressed)}
                 />
-            </View>
-
-            <FAB 
-                color='#be75e4'
-                placement='right'
-                size='large'
-                icon={refresh}
-                onPress={() => setPressed(!pressed)}
-            />
-        </SafeAreaView>
-    )
-}
+            </SafeAreaView>)
+};
 
 const Stack = createStackNavigator();
 
@@ -281,7 +260,6 @@ export const ChatHomeScreen = () => {
             />
         </Stack.Navigator>
     )
-
 }
 
 const fullWidth = Dimensions.get('window').width;
@@ -299,10 +277,6 @@ const styles = StyleSheet.create({
     },
     content: {
         justifyContent: 'flex-start'
-    },
-    loadingView: {
-        justifyContent: 'center',
-        alignItems: 'center'
     },
     latestMessage: {
         color: '#888888',

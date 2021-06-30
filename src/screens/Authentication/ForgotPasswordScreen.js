@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
-import {
-    Keyboard, KeyboardAvoidingView, StyleSheet,
-    Text, TextInput, TouchableOpacity,
-    TouchableWithoutFeedback, View, Animated
-} from 'react-native';
+import { Animated, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity,
+    TouchableWithoutFeedback, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CommonActions } from "@react-navigation/native";
-import * as Authentication from "../../firebase/auth";
+
+import * as Authentication from "../../../firebase/auth";
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
 
 const Checkmark = () => {
     const checkmarkSize = useRef(new Animated.Value(0)).current
@@ -51,7 +53,7 @@ export const CheckEmailScreen = ({navigation}) => {
     return (
         <View style= {styles.container}>
             <Checkmark/>
-            <Text style= {styles.text}>
+            <Text style= {[text.normal, {marginBottom: 20}]}>
                 An email to reset your password
                 {'\n'}
                 has been sent to your inbox.
@@ -85,10 +87,10 @@ export const ForgotPasswordScreen = ({navigation}) => {
         >
             <KeyboardAvoidingView 
                 behavior='padding'
-                style={styles.container}
+                style={[common.container, common.vertical]}
             >
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style= {[styles.text, {alignSelf: 'flex-start'}]}>
+                    <Text style= {[text.normal, { alignSelf: 'flex-start', marginBottom: 20 }]}>
                         Reset your password by email
                     </Text>
                     <View style={styles.inputView}>
@@ -120,13 +122,6 @@ export const ForgotPasswordScreen = ({navigation}) => {
 // button onPress: toggle to next page
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
     inputView: {
         borderColor: '#ffd966',
         borderBottomColor: '#fac219',
@@ -159,12 +154,6 @@ const styles = StyleSheet.create({
     },
     checkmarkWrapper: {
         marginBottom: 30,
-    },
-    text: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 20,
-        marginBottom: 20
     },
     backText: {
         color: '#ffffff',

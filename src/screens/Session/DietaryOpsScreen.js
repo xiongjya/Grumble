@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
+import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { SafeAreaView, Text, TouchableOpacity, View, 
-    StyleSheet} from 'react-native';
 
-import { selectPin, selectStart } from '../redux/sessionSlice';
-import { addDietary, removeDietary } from '../redux/filterOptionsSlice';
+import { selectPin, selectStart } from '../../redux/sessionSlice';
+import { addDietary, removeDietary, selectDietary } from '../../redux/filterOptionsSlice';
+
+import common from '../../styles/common';
+import buttons from '../../styles/buttons';
+import text from '../../styles/text';
 
 const COLOR1 = '#ff5733';
 const COLOR2 = '#c70039';
@@ -23,7 +26,6 @@ const MyButton = (props) => {
         } else {
             dispatch(addDietary(props.name));
         }
-        
     }
 
     return (
@@ -45,81 +47,62 @@ export const DietaryOpsScreen = ({navigation}) => {
     const pin = useSelector(selectPin);
 
     return (
-        <SafeAreaView style= {styles.container}>
-            <Text style={styles.sessionCode}>PIN: {pin}</Text>
+        <SafeAreaView style= {[common.container, common.vertical]}>
+            <Text style={text.sessionCode}>PIN: {pin}</Text>
 
-            {start ? (<Text style= {styles.qnNumber}>3/4</Text>)
-                   : (<Text style= {styles.qnNumber}>1/2</Text>)
+            {start ? (<Text style= {text.qnNumber}>3/4</Text>)
+                   : (<Text style= {text.qnNumber}>1/2</Text>)
             }
 
-            <Text style= {styles.question}>
+            <Text style= {text.question}>
                 What are your cravings/dietary restrictions?
             </Text>
 
-            <View style={styles.optionRow}>
+            <View style={common.horizontal}>
                 <MyButton color={COLOR1} option='Cafes' name='cafes'/>
                 <MyButton color={COLOR1} option='Chinese' name='chinese'/>
                 <MyButton color={COLOR2} option='Fast food' name='hotdogs'/>
             </View>
 
-            <View style={styles.optionRow}>
+            <View style={common.horizontal}>
                 <MyButton color={COLOR1} option='Indian' name='indpak'/>
                 <MyButton color={COLOR2} option='Japanese' name='japanese'/>
                 <MyButton color={COLOR3} option='Kopitiam' name='kopitiam'/>
             </View>
 
-            <View style={styles.optionRow}>
+            <View style={common.horizontal}>
                 <MyButton color={COLOR2} option='Korean' name='korean'/>
                 <MyButton color={COLOR3} option='Malaysian' name='malaysian'/>
                 <MyButton color={COLOR4} option='Mexican' name='mexican'/>
             </View>
 
-            <View style={styles.optionRow}>
+            <View style={common.horizontal}>
                 <MyButton color={COLOR3} option='Thai' name='thai'/>
                 <MyButton color={COLOR4} option='Vietnamese' name='vietnamese'/>
                 <MyButton color={COLOR3} option='Gluten-Free' name='gluten_free'/>
             </View>
 
-            <View style={styles.optionRow}>
+            <View style={common.horizontal}>
                 <MyButton color={COLOR4} option='Halal' name='halal'/>
                 <MyButton color={COLOR3} option='Seafood' name='seafood'/>
                 <MyButton color={COLOR2} option='Vegan' name='vegan'/>
             </View>
 
-            <View style={styles.optionRow}>
+            <View style={common.horizontal}>
                 <MyButton color={COLOR2} option='Vegetarian' name='vegetarian'/>
             </View>
 
             <TouchableOpacity 
-                style={styles.next}
+                style={buttons.clear}
                 onPress={() => navigation.navigate('PriceRange')}
             >
-                <Text style={styles.nextText}> NEXT </Text>
+                <Text style={text.clearText}> NEXT </Text>
             </TouchableOpacity>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
-    qnNumber: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 5
-    },
-    question: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18,
-        marginBottom: 30
-    },
     buttonBase: {
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -142,33 +125,5 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    next: {
-        backgroundColor: '#ffd966',
-        borderRadius: 30,
-        height: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 15,
-        marginTop: 30,
-        borderWidth: 2,
-        borderColor: '#be75e4'
-    },
-    nextText: {
-        color: '#be75e4',
-        fontWeight: 'bold',
-        fontSize: 18
-    },
-    optionRow: {
-        flexDirection: 'row',
-    },
-    sessionCode: {
-        position: 'absolute',
-        alignSelf: 'flex-end',
-        right: 20,
-        top: 70,
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18
     }
 })

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import {
-    Image, Keyboard, KeyboardAvoidingView, StyleSheet,
-    Text, TextInput, TouchableOpacity,
-    TouchableWithoutFeedback, View
-} from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity,
+    TouchableWithoutFeedback, View } from 'react-native';
 import { CommonActions } from "@react-navigation/native";
-import * as Authentication from "../../firebase/auth";
+
+import * as Authentication from "../../../firebase/auth";
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
 
 export const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -37,14 +39,14 @@ export const LoginScreen = ({navigation}) => {
         >
             <KeyboardAvoidingView 
                 behavior='padding'
-                style={styles.container}
+                style={[common.container, common.vertical]}
             >
                 <Image
-                    source={require('../../assets/images/grumble.png')}
+                    source={require('../../../assets/images/grumble.png')}
                     style={styles.logoImage}
                 />
                 <Image 
-                    source={require('../../assets/images/cutleries.png')} 
+                    source={require('../../../assets/images/cutleries.png')} 
                     style={styles.image}
                 />
                 <View style={styles.inputView}>
@@ -101,13 +103,6 @@ export const LoginScreen = ({navigation}) => {
 // button onPress: toggle to next page
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
     logoImage: {
         width: 200,
         height: 200,

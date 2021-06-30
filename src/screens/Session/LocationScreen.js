@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Slider from '@react-native-community/slider';
-
-import { selectPin } from '../redux/sessionSlice';
-import { addLatitude, addLongitude, addLocation, addDistance } from '../redux/filterOptionsSlice';
-
 import * as Location from 'expo-location';
+
+import { selectPin } from '../../redux/sessionSlice';
+import { addLatitude, addLongitude, addLocation, addDistance } from '../../redux/filterOptionsSlice';
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
 
 export const LocationScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -68,34 +71,34 @@ export const LocationScreen = ({navigation}) => {
         <TouchableWithoutFeedback
             onPress={Keyboard.dismiss}
         >
-            <View style= {styles.container}>
-                <Text style={styles.sessionCode}>PIN: {pin}</Text>
+            <View style= {[common.container, common.vertical]}>
+                <Text style={text.sessionCode}>PIN: {pin}</Text>
 
-                <Text style= {styles.qnNumber}>1/4</Text>
+                <Text style= {text.qnNumber}>1/4</Text>
 
-                <Text style= {styles.question}>
+                <Text style= {text.question}>
                     Choose your location:
                 </Text>
                 <TouchableOpacity 
                     onPress={getCurrentLocation}
                     style= {styles.useMyLocation}
                 >
-                    <Text style= {styles.text}>
+                    <Text style= {text.normal}>
                         Use my location
                     </Text>
                 </TouchableOpacity>
 
                 <Text style= {styles.orText}>OR</Text>
-                <View style= {styles.enterPC}>
+                <View style= {styles.address}>
                     <TextInput
                         onChangeText={onAddressFill}
                         placeholder='Enter address'
-                        style={styles.text}
+                        style={text.normal}
                         value={filledLocation}
                         selectionColor='#fac219'
                     />
                 </View>
-                <Text style={styles.question}>
+                <Text style={text.question}>
                     Distance radius: {radius}km
                 </Text>
                 <Slider
@@ -111,10 +114,10 @@ export const LocationScreen = ({navigation}) => {
                     <Text style= {{color: '#ffffff', fontSize: 14}}>5km</Text>
                 </View>
                 <TouchableOpacity 
-                    style={styles.next}
+                    style={buttons.clear}
                     onPress={onPressNext}
                 >
-                    <Text style={styles.nextText}> NEXT </Text>
+                    <Text style={text.clearText}> NEXT </Text>
                 </TouchableOpacity>
             </View>
         </TouchableWithoutFeedback>
@@ -122,25 +125,6 @@ export const LocationScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
-    qnNumber: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 5
-    },
-    question: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18,
-        marginBottom: 30
-    },
     useMyLocation: {
         backgroundColor: '#FAC219',
         borderRadius: 30,
@@ -150,7 +134,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    enterPC: {
+    address: {
         borderColor: '#FAC219',
         borderWidth: 2,
         borderRadius: 30,
@@ -166,39 +150,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginBottom: 15,
     },
-    text: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 20,
-    },
     dist: {
         width: '70%',
         justifyContent: 'space-between',
         flexDirection: 'row'
     },
-    next: {
-        backgroundColor: '#ffd966',
-        borderRadius: 30,
-        height: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 15,
-        marginTop: 30,
-        borderWidth: 2,
-        borderColor: '#be75e4'
-    },
-    nextText: {
-        color: '#be75e4',
-        fontWeight: 'bold',
-        fontSize: 18
-    },
-    sessionCode: {
-        position: 'absolute',
-        alignSelf: 'flex-end',
-        right: 20,
-        top: 70,
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18
-    }
 })

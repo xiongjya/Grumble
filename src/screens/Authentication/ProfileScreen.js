@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Icon, Image, Overlay } from 'react-native-elements';
 import { CommonActions } from "@react-navigation/native";
-import * as Authentication from "../../firebase/auth";
+import * as Authentication from "../../../firebase/auth";
 
 const Dietary = (props) => {
     const {diets} = props;
@@ -81,7 +81,7 @@ export const ProfileScreen = ({navigation}) => {
   );
   
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView>
           <View style={styles.header}>
             <TouchableOpacity 
               style={styles.logoutButton}

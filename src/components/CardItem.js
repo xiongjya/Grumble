@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Dimensions, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import { Options } from '../components/Options';
+
 export const CardItem = ({
   address,
   categories,
@@ -14,9 +16,6 @@ export const CardItem = ({
   website
 }) => {
   const [information, setInformation] = useState(true);
-
-  console.log(categories);
-  console.log(transactions);
 
   return (
     <View style={styles.containerCardItem}>
@@ -58,13 +57,13 @@ export const CardItem = ({
           <View style={styles.option}>
             <Text>Transactions: </Text>
 
-            <Text style={{fontWeight: 'bold'}}>{transactions}</Text>
+            <Options arr={transactions}/>
           </View>  
 
           <View style={styles.option}>
             <Text>Categories: </Text>
 
-            <Text style={{fontWeight: 'bold'}}>{categories.alias}</Text>
+            <Text style={{fontWeight: 'bold'}}>{categories.map(item => item.title).join(', ')}</Text>
           </View> 
 
         </ScrollView>

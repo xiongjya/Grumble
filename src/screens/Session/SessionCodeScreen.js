@@ -2,7 +2,11 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-import { setPin } from '../redux/sessionSlice';
+import { setPin } from '../../redux/sessionSlice';
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
 
 const makeSession = () => {
     let text = "";
@@ -21,12 +25,12 @@ export const SessionCodeScreen = ({navigation}) => {
     dispatch(setPin(code));
     
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[common.container, common.vertical]}>
             <Text style={styles.text}>Session code:</Text>
             <Text style={styles.session}>{code}</Text>
 
             <TouchableOpacity
-                style={styles.start}
+                style={[buttons.filled, styles.startBtn]}
                 onPress={() => navigation.navigate('Location')}
             >
                 <Text style={[styles.text, {color: '#ffd966'}]}>START</Text>
@@ -36,13 +40,6 @@ export const SessionCodeScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
     session: {
         color: '#ffffff',
         fontWeight: 'bold',
@@ -53,11 +50,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 25
     },
-    start: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#be75e4',
-        borderRadius: 30,
+    startBtn: {
         marginTop: 30,
         paddingHorizontal: 20,
         paddingVertical: 15,

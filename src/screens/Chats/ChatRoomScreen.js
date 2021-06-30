@@ -1,61 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet} from 'react-native';
 import { Icon } from 'react-native-elements';
-import { GiftedChat, Bubble} from 'react-native-gifted-chat';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 
-import * as Authentication from "../../firebase/auth";
-import db from '../../firebase/firestore';
+import { Loading } from '../../components/Loading';
+
+import * as Authentication from '../../../firebase/auth';
+import * as Firestore from '../../../firebase/firestore';
 
 export const ChatRoomScreen = ({ route, navigation }) => {
     const [currentUser, setCurrentUser] = useState({});
     const { thread } = route.params;
 
     const [messages, setMessages] = useState([]);
-
-    async function handleSend(msg) {
-        const text = msg[0].text;
-
-        db
-            .collection('THREADS')
-            .doc(thread._id)
-            .collection('MESSAGES')
-            .add({
-                text,
-                createdAt: new Date().getTime(),
-                user: {
-                    _id: currentUser.uid,
-                    email: currentUser.email,
-                    photo: currentUser.photoURL
-                }
-            })
-            .catch(error => {
-                console.error("Error sending message: ", error);
-            });
-
-        await db
-            .collection('THREADS')
-            .doc(thread._id)
-            .set(
-                {
-                    latestMessage: {
-                        text,
-                        createdAt: new Date().getTime()
-                    }
-                },
-                // updates fields in a document or creates that document if it doesn’t exist, does not overwrite entire document
-                { merge: true }
-            )
-            .catch(error => {
-                console.error("Error sending message: ", error);
-            });
-    }
     
     useEffect(() => {
         const user = Authentication.getCurrentUserObject();
 
         setCurrentUser(user);
 
-        const messagesListener = db
+        const messagesListener = Firestore.db
             .collection('THREADS')
             .doc(thread._id)
             .collection('MESSAGES')
@@ -106,16 +70,9 @@ export const ChatRoomScreen = ({ route, navigation }) => {
         )
     }
 
-    const renderLoading = () => {
-        return (
-            <SafeAreaView style={styles.container}>
-                <ActivityIndicator 
-                    size='large'
-                    color='#be75e4'
-                />
-            </SafeAreaView>
-        )
-    }
+    const renderLoading = () => (
+        <Loading />
+    );
 
     const scrollToBottom = () => {
         return (
@@ -137,7 +94,7 @@ export const ChatRoomScreen = ({ route, navigation }) => {
                 style: {backgroundColor: '#ffd966'}
             }}
             messages={messages}
-            onSend={handleSend}
+            onSend={(msg) => Firestore.sendMessage(thread, msg, currentUser)}
             renderBubble={renderBubble}
             renderLoading={renderLoading}
             scrollToBottom

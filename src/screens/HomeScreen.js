@@ -1,9 +1,9 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SwipeSession } from './SwipeScreen';
-import { ChatHomeScreen } from './ChatScreen';
-import { ProfileScreen } from './ProfileScreen';
+import { SwipeSession } from './Session/SwipeScreen';
+import { ChatHomeScreen } from './Chats/ChatScreen';
+import { ProfileScreen } from './Authentication/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 

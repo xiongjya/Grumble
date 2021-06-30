@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 
-import LoginScreen from '../src/screens/LoginScreen';
+import { LoginScreen } from '../src/screens/Authentication/LoginScreen';
 
-it('renders default elements', () => {
+test('renders default elements', () => {
     const { getByText, getByPlaceholderText } = render(<LoginScreen />);
 
     /*

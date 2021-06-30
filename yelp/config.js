@@ -17,7 +17,7 @@ export const search = async (dietOps, diningOps, latitude, longitude, location, 
     }
 
     const params = {
-        categories: dietOps,
+        categories: dietOps.join(','),
         limit: 10,
         price: getPrices(priceCeil),
         radius: radius,
@@ -33,7 +33,7 @@ export const search = async (dietOps, diningOps, latitude, longitude, location, 
 
     try {
         const response = await yelp.get('/search', { params });
-        
+
         return response.data.businesses;
     } catch (err) {
         alert(err);

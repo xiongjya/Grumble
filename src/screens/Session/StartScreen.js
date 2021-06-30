@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, 
+    TouchableWithoutFeedback, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { KeyboardAvoidingView, Keyboard, 
-    View, Text, TouchableOpacity, TouchableWithoutFeedback, 
-    StyleSheet, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { joined, setPin } from '../redux/sessionSlice';
-import { clearDietary, clearDining } from '../redux/filterOptionsSlice';
+import { joined, setPin } from '../../redux/sessionSlice';
+import { clearDietary, clearDining } from '../../redux/filterOptionsSlice';
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
 
 export const StartScreen = ({navigation}) => {
     const dispatch = useDispatch();
@@ -22,14 +25,14 @@ export const StartScreen = ({navigation}) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <KeyboardAvoidingView 
                 behavior= 'padding'
-                style= {styles.container}
+                style={[common.container, common.vertical]}
             >
-                <View style= {{justifyContent: 'center',alignItems: 'center'}}>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <Text style= {styles.description}>
                         Create a session
                     </Text>
                     <TouchableOpacity 
-                        style= {styles.startBtn}
+                        style= {[buttons.filled, styles.startBtn]}
                         onPress={() => {
                             dispatch(joined(true));
                             navigation.navigate('SessionCode');
@@ -72,13 +75,6 @@ export const StartScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
     description: {
         color: '#ffffff',
         fontSize: 15,
@@ -90,10 +86,6 @@ const styles = StyleSheet.create({
         fontSize: 40,
     },
     startBtn: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#be75e4',
-        borderRadius: 45,
         width: 232,
         height: 73,
         marginBottom: 30

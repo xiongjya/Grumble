@@ -4,9 +4,9 @@ import store from './src/app/store';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen } from './src/screens/HomeScreen';
-import { LoginScreen } from './src/screens/LoginScreen';
-import { RegisterScreen } from './src/screens/RegisterScreen';
-import { ForgotPasswordScreen, CheckEmailScreen } from './src/screens/ForgotPasswordScreen';
+import { LoginScreen } from './src/screens/Authentication/LoginScreen';
+import { RegisterScreen } from './src/screens/Authentication/RegisterScreen';
+import { ForgotPasswordScreen, CheckEmailScreen } from './src/screens/Authentication/ForgotPasswordScreen';
 
 const Stack = createStackNavigator();
 

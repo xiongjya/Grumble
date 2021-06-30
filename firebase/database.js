@@ -16,8 +16,6 @@ export const createRoom = async (sessionCode, userID) => {
     } catch (error) {
         alert(error);
     }
-    
-    
 }
 
 export const joinRoom = async (sessionCode, userID) => {

@@ -3,8 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SafeAreaView, Text, TouchableOpacity, 
     StyleSheet} from 'react-native';
 
-import { selectPin } from '../redux/sessionSlice';
-import { addDining, removeDining } from '../redux/filterOptionsSlice';
+import { selectPin } from '../../redux/sessionSlice';
+import { addDining, removeDining } from '../../redux/filterOptionsSlice';
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
 
 const MyButton = (props) => {
     const dispatch = useDispatch();
@@ -14,9 +18,9 @@ const MyButton = (props) => {
         setDisabled(!disabled);
 
         if (disabled) {
-            dispatch(removeDining(props.diningOp));
+            dispatch(removeDining(props.name));
         } else {
-            dispatch(addDining(props.diningOp));
+            dispatch(addDining(props.name));
         }
         
     }
@@ -28,7 +32,7 @@ const MyButton = (props) => {
                     : [styles.buttonBase, {backgroundColor: props.color}]}
                 onPress= { onPress }
         >
-            <Text style= {styles.buttonText}>
+            <Text style= {text.normal}>
                 {props.diningOp}
             </Text>
         </TouchableOpacity>
@@ -39,11 +43,11 @@ export const DiningOpsScreen = ({navigation}) => {
     const pin = useSelector(selectPin);
 
     return (
-        <SafeAreaView style= {styles.container}>
-            <Text style={styles.sessionCode}>PIN: {pin}</Text>
+        <SafeAreaView style= {[common.container, common.vertical]}>
+            <Text style={text.sessionCode}>PIN: {pin}</Text>
 
-            <Text style= {styles.qnNumber}>2/4</Text>
-            <Text style= {styles.question}>
+            <Text style= {text.qnNumber}>2/4</Text>
+            <Text style= {text.question}>
                 Select your dining options:
             </Text>
             <MyButton
@@ -51,40 +55,23 @@ export const DiningOpsScreen = ({navigation}) => {
                 diningOp= 'Dine-in'/>
             <MyButton
                 color= '#C70039'
-                diningOp= 'Takeaway'/>
+                diningOp= 'Pick-up'
+                name='pickup'/>
             <MyButton
                 color= '#900C3F'
-                diningOp= 'Delivery'/>
+                diningOp= 'Delivery'
+                name='delivery'/>
             <TouchableOpacity 
-                style={styles.next}
+                style={buttons.clear}
                 onPress={() => navigation.navigate('DietaryOps')}
             >
-                <Text style={styles.nextText}> NEXT </Text>
+                <Text style={text.clearText}> NEXT </Text>
             </TouchableOpacity>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffd966',
-    },
-    qnNumber: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 24,
-        marginBottom: 5
-    },
-    question: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18,
-        marginBottom: 30
-    },
     buttonBase: {
         width: 241,
         height: 56,
@@ -92,11 +79,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 20,
     },
     buttonDisabled: {
         width: 241,
@@ -106,30 +88,5 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    next: {
-        backgroundColor: '#ffd966',
-        borderRadius: 30,
-        height: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 15,
-        marginTop: 30,
-        borderWidth: 2,
-        borderColor: '#be75e4'
-    },
-    nextText: {
-        color: '#be75e4',
-        fontWeight: 'bold',
-        fontSize: 18
-    },
-    sessionCode: {
-        position: 'absolute',
-        alignSelf: 'flex-end',
-        right: 20,
-        top: 70,
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18
     }
 })

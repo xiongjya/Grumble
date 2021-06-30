@@ -9,23 +9,30 @@ String.prototype.capitalize = function() {
 export const Options = ( props ) => {
     const transactions = ['pickup', 'delivery', 'restaurant_reservation'];
 
-    const op = props.arr.map((x, index) => {
+    const op = transactions.map((x, index) => {
         return (
             <View style={styles.op} key={index}>
-                <Icon
-                    name='check'
-                    type='font-awesome-5'
-                    color='#6aa84f'
-                    iconStyle={{fontSize: 13}}
-                /> 
-
-                <Text style={styles.option}>{x.capitalize()}</Text>
+                {props.arr.includes(x) 
+                    ? (<Icon
+                        name='check'
+                        type='font-awesome-5'
+                        color='#6aa84f'
+                        iconStyle={{fontSize: 13}}
+                    />)
+                    : (
+                        <Icon
+                        name='times'
+                        type='font-awesome-5'
+                        color='#c84031'
+                        iconStyle={{fontSize: 13}}
+                    />)}
+                <Text style={styles.option}> {x === 'restaurant_reservation' ? 'Restaurant reservation' : x.capitalize()}   </Text>
             </View>
         )
     })
 
     return (
-        <View style={styles.option}>
+        <View style={styles.op}>
             {op}
         </View>
     )
@@ -39,5 +46,6 @@ const styles = StyleSheet.create({
     option: {
         flexDirection: 'row',
         flexWrap: 'wrap',
+        fontWeight: 'bold'
     }
 })
