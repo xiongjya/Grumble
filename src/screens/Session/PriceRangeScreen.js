@@ -40,7 +40,7 @@ export const PriceRangeScreen = ({navigation}) => {
 
             Firestore.createChat(pin, userId, Authentication.getCurrentUserName());
         } else {
-            Database.joinRoom(pin, userId);
+            Database.joinRoom(pin, userId, () => {navigation.navigate('Start')});
             Firestore.joinChat(pin, userId);
             navigation.navigate('Swipe');
         }

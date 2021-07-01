@@ -5,35 +5,74 @@ export const database = firebase.database();
 //string sessionCode, int usersJoined (ppl in room),
 // int usersDone (ppl done swiping), int[] userIDs
 export const createRoom = async (sessionCode, userID) => {
+    const userRef = database.ref('users/' + userID);
     try {
-        await database
-            .ref('rooms/' + sessionCode)
-            .set({
-                usersJoined: 1,
-                usersDone: 0,
-                userIDs: [userID]
-            });
+        userRef.once(
+            'value',
+            (snap) => {
+              if (snap.exists()) {
+                const data = snap.val();
+                if (data.rooms) {
+                    userRef.update({
+                        rooms: [...data.rooms, sessionCode],
+                    });
+                } 
+              } else {
+                userRef.set({
+                    rooms: [sessionCode],
+                });
+              }
+              database
+                .ref('rooms/' + sessionCode)
+                .set({
+                    usersJoined: 1,
+                    usersDone: 0,
+                    userIDs: [userID]
+                });
+            }
+        )
     } catch (error) {
         alert(error);
     }
 }
 
-export const joinRoom = async (sessionCode, userID) => {
+export const joinRoom = async (sessionCode, userID, onFailure) => {
+    const roomRef = database.ref('rooms/' + sessionCode);
+    const userRef = database.ref('users/' + userID);
     try {
-        await database
-        .ref('rooms/' + sessionCode)
+        await roomRef
         .once('value', (snap) => {
-        if (snap.exists()) {
-            database
-            .ref('rooms/' + sessionCode)
-            .update({
-                usersJoined: ++snap.val().usersJoined,
-                userIDs: [...snap.val().userIDs, userID],
-            })
-        } else {
-            alert("Room does not exist.")
-        }
-        })
+            if (snap.exists()) { //check if room exists, if it does add to user history 
+                userRef.once(
+                    'value',
+                    (snapshot) => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            if (data.rooms) {
+                                //return and dont add to room capacity if user alr in room
+                                if (data.rooms.includes(sessionCode)) return;
+                                //else update user history and increase room capacity
+                                userRef.update({
+                                    rooms: [...data.rooms, sessionCode],
+                                });
+                            }
+                        } else {
+                            userRef.set({
+                            rooms: [sessionCode],
+                            });
+                        }
+                        roomRef
+                        .update({
+                            usersJoined: ++snap.val().usersJoined,
+                            userIDs: [...snap.val().userIDs, userID],
+                        })
+                    });
+                } else {
+                    alert("Room does not exist.")
+                    onFailure();
+                }
+            }
+        );
     } catch (error) {
         alert(error)
     }
