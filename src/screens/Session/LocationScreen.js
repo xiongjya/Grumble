@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Slider from '@react-native-community/slider';
 import * as Location from 'expo-location';
 
@@ -30,12 +31,10 @@ export const LocationScreen = ({navigation}) => {
                 alert('Permission to access location was denied');
             } else {
                 const location = await Location.getCurrentPositionAsync({});
-
+                
                 setCurrLocation(true);
                 setLatitude(location.coords.latitude);
                 setLongitude(location.coords.longitude);
-
-                setTimeout(() => {}, 3000);
             }
         } else {
             alert('Location service not enabled, please enable your location services in Settings to continue.');
@@ -60,12 +59,14 @@ export const LocationScreen = ({navigation}) => {
             }
             
             dispatch(addDistance(radius * 1000));
-            navigation.navigate('DiningOps');
+            navigation.navigate('DietaryOps');
 
         } else {
-            alert('Empty fields, either use your current location or enter an address.');
+            alert('Empty fields, either use your current location or enter an address. If you had used your current location, wait for the cross to change to a tick to ensure that we have your location.');
         }
     };
+
+    useEffect(() => {}, [latitude, longitude])
 
     return (
         <TouchableWithoutFeedback
@@ -74,7 +75,7 @@ export const LocationScreen = ({navigation}) => {
             <View style= {[common.container, common.vertical]}>
                 <Text style={text.sessionCode}>PIN: {pin}</Text>
 
-                <Text style= {text.qnNumber}>1/4</Text>
+                <Text style= {text.qnNumber}>1/3</Text>
 
                 <Text style= {text.question}>
                     Choose your location:
@@ -87,9 +88,26 @@ export const LocationScreen = ({navigation}) => {
                         Use my location
                     </Text>
                 </TouchableOpacity>
+                <View style={common.horizontal}>
+                    <Text style={styles.address}>Current location obtained:  </Text>
+                    {(latitude === 0 && longitude === 0)
+                        ? (<Icon
+                        name='times'
+                        type='font-awesome-5'
+                        color='#c84031'
+                        iconStyle={{fontSize: 17}}
+                        />)
+                        : (<Icon
+                            name='check'
+                            type='font-awesome-5'
+                            color='#6aa84f'
+                            iconStyle={{fontSize: 17}}
+                        />)}
+                </View>
 
                 <Text style= {styles.orText}>OR</Text>
-                <View style= {styles.address}>
+
+                <View style= {styles.filledLocation}>
                     <TextInput
                         onChangeText={onAddressFill}
                         placeholder='Enter address'
@@ -130,11 +148,14 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         width: '70%',
         height: 50,
-        marginBottom: 15,
+        marginBottom: 10,
         alignItems: 'center',
         justifyContent: 'center'
     },
     address: {
+        color: 'dimgray'
+    },
+    filledLocation: {
         borderColor: '#FAC219',
         borderWidth: 2,
         borderRadius: 30,
@@ -148,7 +169,7 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontWeight: 'bold',
         fontSize: 20,
-        marginBottom: 15,
+        margin: 15,
     },
     dist: {
         width: '70%',

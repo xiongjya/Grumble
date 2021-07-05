@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+
+import * as Authentication from '../../../firebase/auth';
+import * as Database from '../../../firebase/database';
 
 import { selectPin, selectStart } from '../../redux/sessionSlice';
-import { addDietary, removeDietary, selectDietary } from '../../redux/filterOptionsSlice';
 
 import common from '../../styles/common';
 import buttons from '../../styles/buttons';
@@ -14,43 +16,49 @@ const COLOR2 = '#c70039';
 const COLOR3 = '#900c3f';
 const COLOR4 = '#581845';
 
-const MyButton = (props) => {
-    const dispatch = useDispatch();
-    const [disabled, setDisabled] = useState(false);
-
-    const onPress = () => {
-        setDisabled(!disabled);
-
-        if (disabled) {
-            dispatch(removeDietary(props.name));
-        } else {
-            dispatch(addDietary(props.name));
-        }
-    }
-
-    return (
-        <TouchableOpacity
-                style= { disabled
-                    ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 2, paddingVertical: 8, paddingHorizontal: 18,}]
-                    : [styles.buttonBase, {backgroundColor: props.color}]}
-                onPress= {onPress}
-        >
-            <Text style= {styles.buttonText}>
-                {props.option}
-            </Text>
-        </TouchableOpacity>
-    )
-}
-
-export const DietaryOpsScreen = ({navigation}) => {
+export const DietaryOpsScreen = ({ navigation }) => {
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
+    const [dietaryOps, setDietaryOps] = useState([]);
+
+    const MyButton = (props) => {
+        const [disabled, setDisabled] = useState(false);
+    
+        const onSelected = () => {
+            setDisabled(!disabled);
+
+            if (disabled) {
+
+            } else {
+
+            }
+        }
+    
+        return (
+            <TouchableOpacity
+                    style= { disabled
+                        ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 2, paddingVertical: 8, paddingHorizontal: 18,}]
+                        : [styles.buttonBase, {backgroundColor: props.color}]}
+                    onPress= {onSelected}
+            >
+                <Text style= {styles.buttonText}>
+                    {props.option}
+                </Text>
+            </TouchableOpacity>
+        )
+    }
+
+    const onPress = () => {
+        const user = Authentication.getCurrentUserId();
+
+        navigation.navigate('PriceRange');
+    };
 
     return (
         <SafeAreaView style= {[common.container, common.vertical]}>
             <Text style={text.sessionCode}>PIN: {pin}</Text>
 
-            {start ? (<Text style= {text.qnNumber}>3/4</Text>)
+            {start ? (<Text style= {text.qnNumber}>2/3</Text>)
                    : (<Text style= {text.qnNumber}>1/2</Text>)
             }
 
@@ -92,9 +100,11 @@ export const DietaryOpsScreen = ({navigation}) => {
                 <MyButton color={COLOR2} option='Vegetarian' name='vegetarian'/>
             </View>
 
+            <Text>{dietaryOps}</Text>
+
             <TouchableOpacity 
                 style={buttons.clear}
-                onPress={() => navigation.navigate('PriceRange')}
+                onPress={onPress}
             >
                 <Text style={text.clearText}> NEXT </Text>
             </TouchableOpacity>

@@ -7,7 +7,7 @@ const yelp = axios.create({
     }
 });
 
-export const search = async (dietOps, diningOps, latitude, longitude, location, radius, priceCeil) => {
+export const search = async (dietOps, latitude, longitude, location, radius, priceCeil) => {
     const getPrices = x => {
         const arr = [];
         for (let i = 1; i <= x; i++) {
@@ -18,7 +18,7 @@ export const search = async (dietOps, diningOps, latitude, longitude, location, 
 
     const params = {
         categories: dietOps.join(','),
-        limit: 10,
+        limit: 50,
         price: getPrices(priceCeil),
         radius: radius,
         term: 'restaurants'
@@ -34,7 +34,12 @@ export const search = async (dietOps, diningOps, latitude, longitude, location, 
     try {
         const response = await yelp.get('/search', { params });
 
-        return response.data.businesses;
+        let restaurants = response.data.businesses;
+        restaurants = restaurants
+                        .filter(item => item.is_closed !== false)
+                        .slice(0, 10);
+
+        return restaurants;
     } catch (err) {
         alert(err);
     }

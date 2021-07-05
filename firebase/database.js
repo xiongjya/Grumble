@@ -2,7 +2,7 @@ import firebase from "./config";
 
 export const database = firebase.database();
 
-//string sessionCode, int usersJoined (ppl in room),
+// string sessionCode, int usersJoined (ppl in room),
 // int usersDone (ppl done swiping), int[] userIDs
 export const createRoom = async (sessionCode, userID) => {
     const userRef = database.ref('users/' + userID);

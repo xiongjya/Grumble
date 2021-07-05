@@ -6,13 +6,19 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
-export const Options = ( props ) => {
+export const Options = ({ arr }) => {
     const transactions = ['pickup', 'delivery', 'restaurant_reservation'];
+
+    if (typeof arr === 'undefined') {
+        return (
+            <Text style={styles.unavailable}>-</Text>
+        )
+    }
 
     const op = transactions.map((x, index) => {
         return (
             <View style={styles.op} key={index}>
-                {props.arr.includes(x) 
+                {arr.includes(x) 
                     ? (<Icon
                         name='check'
                         type='font-awesome-5'
@@ -47,5 +53,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         fontWeight: 'bold'
+    },
+    unavailable: {
+        color: '#505050'
     }
 })

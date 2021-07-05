@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { joined, setPin } from '../../redux/sessionSlice';
-import { clearDietary, clearDining } from '../../redux/filterOptionsSlice';
+import { clearDietary } from '../../redux/filterOptionsSlice';
 
 import buttons from '../../styles/buttons';
 import common from '../../styles/common';
@@ -18,7 +18,6 @@ export const StartScreen = ({navigation}) => {
 
     useEffect(() => {
         dispatch(clearDietary());
-        dispatch(clearDining());
     })
 
     return (

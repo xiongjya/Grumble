@@ -10,7 +10,7 @@ import * as Firestore from '../../../firebase/firestore';
 import { search } from '../../../yelp/config';
 
 import { selectPin, selectStart } from '../../redux/sessionSlice';
-import { selectLatitude, selectLongitude, selectLocation, selectDistance, selectDietary, selectDining } from '../../redux/filterOptionsSlice';
+import { selectLatitude, selectLongitude, selectLocation, selectDistance, selectDietary } from '../../redux/filterOptionsSlice';
 
 import buttons from '../../styles/buttons';
 import common from '../../styles/common';
@@ -20,20 +20,19 @@ export const PriceRangeScreen = ({navigation}) => {
 
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
-    const dietaryOps = useSelector(selectDietary);
-    const diningOps = useSelector(selectDining);
     const latitude = useSelector(selectLatitude);
     const longitude = useSelector(selectLongitude);
     const location = useSelector(selectLocation);
     const radius = useSelector(selectDistance);
     const [price, setPrice] = useState(0);
     const [userId, setUserId] = useState('');
+    const [dietaryOps, setDietaryOps] = useState(null);
 
     const onPressFinish = (navigation) => {
         if (start) {
             Database.createRoom(pin, userId);
 
-            const restaurants = search(dietaryOps, diningOps, latitude, longitude, location, radius, price);
+            const restaurants = search(dietaryOps, latitude, longitude, location, radius, price);
             restaurants.then(res => {
                 Database.updateRestaurants(pin, res, () => { navigation.navigate('Swipe') })
             })
@@ -54,7 +53,7 @@ export const PriceRangeScreen = ({navigation}) => {
         <SafeAreaView style={[common.container, common.vertical]}>
             <Text style={text.sessionCode}>PIN: {pin}</Text>
  
-            {start ? (<Text style= {text.qnNumber}>4/4</Text>)
+            {start ? (<Text style= {text.qnNumber}>3/3</Text>)
                    : (<Text style= {text.qnNumber}>2/2</Text>)
             }
 

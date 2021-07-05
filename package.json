@@ -20,6 +20,7 @@
     "@react-navigation/stack": "^5.14.5",
     "@reduxjs/toolkit": "^1.5.1",
     "axios": "^0.21.1",
+    "debug": "^4.3.1",
     "expo": "~41.0.1",
     "expo-location": "~12.0.4",
     "expo-status-bar": "~1.0.4",
@@ -48,7 +49,7 @@
     "@testing-library/dom": "^8.0.0",
     "@testing-library/jest-native": "^4.0.1",
     "@testing-library/react-native": "^7.2.0",
-    "jest": "^27.0.5"
+    "jest": "26.0"
   },
   "jest": {
     "preset": "react-native"

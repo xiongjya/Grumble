@@ -7,7 +7,6 @@ import { Loading } from '../../components/Loading';
 import { CardItem } from '../../components/CardItem.js';
 
 import { DietaryOpsScreen } from './DietaryOpsScreen';
-import { DiningOpsScreen } from './DiningOpsScreen';
 import { LocationScreen } from './LocationScreen';
 import { PriceRangeScreen } from './PriceRangeScreen';
 import { SessionCodeScreen } from './SessionCodeScreen';
@@ -106,7 +105,6 @@ export const SwipeSession = () => {
             <Stack.Screen name="Start" component={ StartScreen }/>
             <Stack.Screen name="SessionCode" component={ SessionCodeScreen }/>
             <Stack.Screen name="Location" component={ LocationScreen } />
-            <Stack.Screen name="DiningOps" component={ DiningOpsScreen } />
             <Stack.Screen name="DietaryOps" component={ DietaryOpsScreen } />
             <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
             <Stack.Screen name="Swipe" component={ SwipeScreen } />
