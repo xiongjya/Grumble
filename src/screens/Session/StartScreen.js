@@ -4,6 +4,9 @@ import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, TextInput, TouchableO
 import { useDispatch } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { checkRoomExists } from '../../../firebase/database';
+import { getCurrentUserId } from '../../../firebase/auth';
+
 import { joined, setPin } from '../../redux/sessionSlice';
 import { clearDietary } from '../../redux/filterOptionsSlice';
 
@@ -15,6 +18,7 @@ export const StartScreen = ({navigation}) => {
     const dispatch = useDispatch();
 
     const [sessionPin, setSessionPin] = useState('');
+    const [userId, setUserId] = useState('');
 
     useEffect(() => {
         dispatch(clearDietary());
@@ -57,7 +61,7 @@ export const StartScreen = ({navigation}) => {
                             onPress={() => {
                                 dispatch(joined(false));
                                 dispatch(setPin(sessionPin));
-                                navigation.navigate('DietaryOps');
+                                checkRoomExists(sessionPin, () => {navigation.navigate('DietaryOps')});
                             }}
                             disabled={sessionPin.length !== 6}
                         >

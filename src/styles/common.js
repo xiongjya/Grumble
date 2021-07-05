@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const PURPLE = '#be75e4';
+export const PURPLE = '#be75e4';
 const WHITE = '#ffffff';
 const YELLOW = '#ffd966';
 const DARKYELLOW = '#fac219'

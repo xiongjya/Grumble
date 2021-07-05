@@ -36,6 +36,23 @@ export const createRoom = async (sessionCode, userID) => {
     }
 }
 
+export const checkRoomExists = async (sessionCode, onSuccess) => {
+    const roomRef = database.ref('rooms/' + sessionCode);
+    try {
+        await roomRef
+        .once('value', (snap) => {
+            if (snap.exists()) { 
+                    onSuccess();
+                } else {
+                    alert("Room does not exist.")
+                }
+            }
+        );
+    } catch (error) {
+        alert(error)
+    }
+}
+
 export const joinRoom = async (sessionCode, userID, onFailure) => {
     const roomRef = database.ref('rooms/' + sessionCode);
     const userRef = database.ref('users/' + userID);

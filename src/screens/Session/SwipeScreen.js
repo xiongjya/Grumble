@@ -84,7 +84,7 @@ const SwipeScreen = ({navigation}) => {
                                                 name={item.name}
                                                 price={item.price}
                                                 rating={item.rating}
-                                                transactions={item.transactions}
+                                                //transactions={item.transactions}
                                                 website={item.url}
                                     />
                                 </Card>)
