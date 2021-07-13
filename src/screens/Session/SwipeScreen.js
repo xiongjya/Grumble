@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, ImageBackground, SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
+import { useSelector } from 'react-redux';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -9,20 +10,20 @@ import { CardItem } from '../../components/CardItem.js';
 import { DietaryOpsScreen } from './DietaryOpsScreen';
 import { LocationScreen } from './LocationScreen';
 import { PriceRangeScreen } from './PriceRangeScreen';
+import { ResultsScreen } from './ResultsScreen';
 import { SessionCodeScreen } from './SessionCodeScreen';
 import { StartScreen } from './StartScreen';
-import { ResultsScreen } from './ResultsScreen';
+import { UserNumScreen } from './UserNumScreen';
 
 import { database, swipeRestaurant } from '../../../firebase/database';
 import { selectPin } from '../../redux/sessionSlice';
-import { useSelector } from 'react-redux';
 
 const SwipeScreen = ({navigation}) => {
     const [restaurants, setRestaurants] = useState([]);
     const [isLoading, setisLoading] = useState(true);
     const [mounted, setMounted] = useState(false);
     const pin = useSelector(selectPin);
-        
+
     useEffect(() => {
         setMounted(true);
 
@@ -104,6 +105,7 @@ export const SwipeSession = () => {
         >
             <Stack.Screen name="Start" component={ StartScreen }/>
             <Stack.Screen name="SessionCode" component={ SessionCodeScreen }/>
+            <Stack.Screen name="UserNum" component={ UserNumScreen }/>
             <Stack.Screen name="Location" component={ LocationScreen } />
             <Stack.Screen name="DietaryOps" component={ DietaryOpsScreen } />
             <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
@@ -123,5 +125,8 @@ const styles = StyleSheet.create({
     background: {
         width: FULL_WIDTH,
         height: FULL_HEIGHT
+    },
+    margin: {
+        marginBottom: 20
     }
 })

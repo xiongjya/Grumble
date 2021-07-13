@@ -28,11 +28,13 @@ export const createChat = async (pin, userId, displayName) => {
                         system: true
                     });
 
+        /*
         await db.collection('USERS')
                 .doc(userId)
                 .collection('chats')
                 .doc(pin)
                 .set({});
+        */
     } catch (error) {
         alert(error);
     }

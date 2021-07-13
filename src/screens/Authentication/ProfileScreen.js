@@ -1,19 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Keyboard, 
-  SafeAreaView, 
-  StyleSheet,
-  Text,
-  TextInput, 
-  TouchableOpacity, 
-  View,
-} from 'react-native';
-import { Icon, Image, Overlay } from 'react-native-elements';
+import { Keyboard, SafeAreaView, ScrollView, StyleSheet,Text,TextInput, TouchableOpacity, View } from 'react-native';
+import { Icon, Image, ListItem, Overlay } from 'react-native-elements';
 import { CommonActions } from "@react-navigation/native";
+
 import * as Authentication from "../../../firebase/auth";
 
+import mockHistory from '../../../assets/data/mockHistory';
+
+import buttons from '../../styles/buttons';
+import common from '../../styles/common';
+import text from '../../styles/text';
+import { FlatList } from 'react-native';
+
+const renderHistory = ({ item }) => {
+    return (
+      <ListItem>
+        <ListItem.Content>
+          <ListItem.Title style={text.bold}>{item.name}</ListItem.Title>
+          <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+        </ListItem.Content>
+
+        <Icon
+          name='star'
+          type='antdesign'
+          size={20}
+          color='#ffd996'
+        />
+      </ListItem>
+    );
+}
+
 const Dietary = (props) => {
-    const {diets} = props;
+    const { diets } = props;
     return (
         <View style = {styles.info}>
             {diets.map((diet, index) =>
@@ -188,13 +206,19 @@ export const ProfileScreen = ({navigation}) => {
           <View style={styles.body}>
             <View style={styles.bodyContent}>
               <Text style={styles.name}>{Authentication.getCurrentUserName()}</Text>
-              <Dietary diets={exampleDiet}/>
+
               <TouchableOpacity style={styles.buttonContainer}>
                 <Text>Favourite Restaurants</Text>  
-              </TouchableOpacity>              
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text></Text> 
               </TouchableOpacity>
+                            
+              <View style={styles.buttonContainer}>
+                <FlatList
+                  data={mockHistory}
+                  renderItem={renderHistory}
+                  keyExtractor={(item) => item.id}
+                  style={{borderRadius: 20}}
+                />
+              </View>
             </View>
         </View>
       </SafeAreaView>
@@ -236,6 +260,7 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:22,
+    fontWeight:'600',
     color: "#ffffff",
     shadowColor: "#696969",
     shadowOffset: {
@@ -243,7 +268,7 @@ const styles = StyleSheet.create({
         height: 1
     },
     shadowOpacity:0.8,
-    fontWeight:'600',
+    marginBottom: 5
   },
   body:{
     marginTop:40,
@@ -277,14 +302,13 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   buttonContainer: {
-    marginTop:10,
-    height:130,
-    flexDirection: 'row',
+    margin: 10,
+    height: 130,
+    width: 350,
+    padding: 3,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:10,
-    width:350,
-    borderRadius:20,
+    alignItems: 'stretch',
+    borderRadius: 20,
     backgroundColor: "#ffffff",
     shadowColor: "#696969",
     shadowOffset: {

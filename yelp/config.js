@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import * as database from '../firebase/database';
+
 const yelp = axios.create({
     baseURL : "https://api.yelp.com/v3/businesses",
     headers : {
@@ -7,7 +9,11 @@ const yelp = axios.create({
     }
 });
 
-export const search = async (dietOps, latitude, longitude, location, radius, priceCeil) => {
+export const search = async (latitude, longitude, location, radius) => {
+    const priceCeil = database.getPriceCeil();
+
+    const dietOps = database.getDietaryOptions();
+
     const getPrices = x => {
         const arr = [];
         for (let i = 1; i <= x; i++) {

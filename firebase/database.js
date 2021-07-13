@@ -4,35 +4,17 @@ export const database = firebase.database();
 
 // string sessionCode, int usersJoined (ppl in room),
 // int usersDone (ppl done swiping), int[] userIDs
-export const createRoom = async (sessionCode, userID) => {
-    const userRef = database.ref('users/' + userID);
+export const createRoom = async (sessionCode, userNum) => {
     try {
-        userRef.once(
-            'value',
-            (snap) => {
-              if (snap.exists()) {
-                const data = snap.val();
-                if (data.rooms) {
-                    userRef.update({
-                        rooms: [...data.rooms, sessionCode],
-                    });
-                } 
-              } else {
-                userRef.set({
-                    rooms: [sessionCode],
-                });
-              }
-              database
-                .ref('rooms/' + sessionCode)
-                .set({
-                    usersJoined: 1,
-                    usersDone: 0,
-                    userIDs: [userID]
-                });
-            }
-        )
+        await database.ref('rooms/' + sessionCode)
+                      .set({
+                          usersTotal: userNum,
+                          usersJoined: 0,
+                          usersDone: 0,
+                          priceCeil: 1
+                      })
     } catch (error) {
-        alert(error);
+        alert(error)
     }
 }
 
@@ -117,6 +99,21 @@ export const updateCategories = async (sessionCode, categories) => {
             }
             catRef.set(obj);
         })
+    } catch (err) {
+        alert(err);
+    }
+}
+
+export const getDietaryOptions = async (sessionCode) => {
+    
+}
+
+export const getPriceCeil = async (sessionCode) => {
+    const roomRef = database.ref('rooms/' + sessionCode);
+    try {
+        const priceCeil = await roomRef.child('priceCeil').get();
+
+        return priceCeil;
     } catch (err) {
         alert(err);
     }

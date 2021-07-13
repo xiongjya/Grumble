@@ -31,7 +31,7 @@ export const SessionCodeScreen = ({navigation}) => {
 
             <TouchableOpacity
                 style={[buttons.filled, styles.startBtn]}
-                onPress={() => navigation.navigate('Location')}
+                onPress={() => navigation.navigate('UserNum')}
             >
                 <Text style={[styles.text, {color: '#ffd966'}]}>START</Text>
             </TouchableOpacity>
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
         fontSize: 25
     },
     startBtn: {
-        marginTop: 30,
         paddingHorizontal: 20,
         paddingVertical: 15,
     },
