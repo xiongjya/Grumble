@@ -3,7 +3,6 @@ import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-nat
 import { useSelector } from 'react-redux';
 
 import * as Authentication from '../../../firebase/auth';
-import * as Database from '../../../firebase/database';
 
 import { selectPin, selectStart } from '../../redux/sessionSlice';
 

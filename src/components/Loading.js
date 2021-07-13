@@ -1,10 +1,13 @@
 import React from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native';
+import { Image, SafeAreaView, StyleSheet } from 'react-native';
 
 export const Loading = () => {
     return (
         <SafeAreaView style= {styles.container}>
-            <ActivityIndicator size="large" color="#ffffff"/>
+            <Image 
+                source={require('../../assets/images/loading.gif')}
+                style={styles.image}
+            />
         </SafeAreaView>
     )
 }
@@ -15,5 +18,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ffd966'
+    },
+    image: {
+        height: 230,
+        width: 230,
+        borderRadius: 360
     }
 })

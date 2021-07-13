@@ -12,7 +12,9 @@ export default text = StyleSheet.create({
     },
     // to use with filled button
     filledText: {
-
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 18
     },
     // for each session
     qnNumber: {
@@ -41,5 +43,8 @@ export default text = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: '#ffffff'
+    },
+    bold: {
+        fontWeight: 'bold'
     }
 });

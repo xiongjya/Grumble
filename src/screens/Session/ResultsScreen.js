@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, Animated} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, Animated } from 'react-native';
 import { useSelector } from 'react-redux';
 import common from '../../styles/common';
 import text from '../../styles/text';
+import { PURPLE } from '../../styles/common';
 
 import { database } from '../../../firebase/database';
-
-import { PURPLE } from '../../styles/common';
 
 import { selectPin } from '../../redux/sessionSlice';
 
@@ -55,6 +54,7 @@ const ListItem = ( { item, index, scrollX} ) => {
         </Animated.View>
       </View>);
 }
+
 const Results = ( { data, scrollX } ) => (
     <Animated.FlatList
         showsHorizontalScrollIndicator={false}
@@ -71,7 +71,8 @@ const Results = ( { data, scrollX } ) => (
         )}
         scrollEventThrottle={16}
         renderItem={({ item, index }) => <ListItem item= {item} index= {index} scrollX= {scrollX}/>}
-    />);
+    />
+);
 
 export const ResultsScreen = () => {
     const [allDone, setAllDone] = useState(false);
@@ -80,7 +81,7 @@ export const ResultsScreen = () => {
     const pin = useSelector(selectPin);
     const scrollX = useRef(new Animated.Value(0)).current;
 
-    const waiting = <Text style= {[text.normal, styles.margin]}> Waiting for {usersUndone} users... </Text>
+    const waiting = (<Text style= {[text.normal, styles.margin]}> Waiting for {usersUndone} users... </Text>)
 
     useEffect(() => {
         const roomRef = database.ref('rooms/' + pin);
@@ -129,7 +130,8 @@ export const ResultsScreen = () => {
 
 const styles = StyleSheet.create({
     margin: {
-        marginBottom: 20
+        marginBottom: 20,
+        fontSize: 24
     },
     display: {
         marginHorizontal: SPACING,

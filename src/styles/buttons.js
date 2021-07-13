@@ -20,6 +20,7 @@ export default buttons = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#be75e4',
-        borderRadius: 45
+        borderRadius: 30,
+        marginTop: 30
     }
 });
