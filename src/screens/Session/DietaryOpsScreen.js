@@ -3,7 +3,7 @@ import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-nat
 import { useSelector } from 'react-redux';
 
 import * as Authentication from '../../../firebase/auth';
-import * as Database from '../../../firebase/database';
+import { updateCategories } from '../../../firebase/database';
 
 import { selectPin, selectStart } from '../../redux/sessionSlice';
 
@@ -11,33 +11,35 @@ import common from '../../styles/common';
 import buttons from '../../styles/buttons';
 import text from '../../styles/text';
 
-const COLOR1 = '#ff5733';
-const COLOR2 = '#c70039';
-const COLOR3 = '#900c3f';
-const COLOR4 = '#581845';
+function getColor(x) {
+    switch (x % 4) {
+      case 0:
+        return '#ff5733';
+      case 1:
+        return '#c70039';
+      case 2:
+        return '#900c3f';
+      case 3:
+        return '#581845';
+    }
+}
 
-export const DietaryOpsScreen = ({ navigation }) => {
-    const start = useSelector(selectStart);
-    const pin = useSelector(selectPin);
-    const [dietaryOps, setDietaryOps] = useState([]);
-
-    const MyButton = (props) => {
-        const [disabled, setDisabled] = useState(false);
+const MyButton = (props) => {
+        const [selected, setSelected] = useState(false);
     
         const onSelected = () => {
-            setDisabled(!disabled);
-
-            if (disabled) {
-
+            if (selected) {
+              props.unselect();
             } else {
-
+              props.select();
             }
+            setSelected(!selected);
         }
     
         return (
             <TouchableOpacity
-                    style= { disabled
-                        ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 2, paddingVertical: 8, paddingHorizontal: 18,}]
+                    style= { selected
+                        ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 5}]
                         : [styles.buttonBase, {backgroundColor: props.color}]}
                     onPress= {onSelected}
             >
@@ -48,9 +50,39 @@ export const DietaryOpsScreen = ({ navigation }) => {
         )
     }
 
-    const onPress = () => {
-        const user = Authentication.getCurrentUserId();
+export const selectedScreen = ({ navigation }) => {
+    const start = useSelector(selectStart);
+    const pin = useSelector(selectPin);
+    const [selected, setSelected] = useState([].fill(false, 0, 16));
 
+    const options = [
+        {option: 'Cafes', name: 'cafes'},
+        {option: 'Chinese', name: 'chinese'},
+        {option: 'Fast food', name: 'hotdogs'},
+        {option: 'Indian', name: 'indpak'},
+        {option: 'Japanese', name: 'japanese'},
+        {option: 'Kopitiam', name: 'kopitiam'},
+        {option: 'Korean', name: 'korean'},
+        {option: 'Malaysian', name: 'malaysian'},
+        {option: 'Mexican', name: 'mexican'},
+        {option: 'Kopitiam', name: 'kopitiam'},
+        {option: 'Thai', name: 'thai'},
+        {option: 'Vietnamese', name: 'vietnamese'},
+        {option: 'Gluten-Free', name: 'gluten_free'},
+        {option: 'Halal', name: 'halal'},
+        {option: 'Seafood', name: 'seafood'},
+        {option: 'Vegan', name: 'vegan'},
+        {option: 'Vegetarian', name: 'vegetarian'}
+    ]
+
+    const onPress = () => {
+        const categories = [];
+        for (let i = 0 ; i < options.length ; i++ ) {
+            if (selected[i]) {
+                res.push(options[i].name);
+            }
+        }
+        
         navigation.navigate('PriceRange');
     };
 
@@ -66,41 +98,23 @@ export const DietaryOpsScreen = ({ navigation }) => {
                 What are your cravings/dietary restrictions?
             </Text>
 
-            <View style={common.horizontal}>
-                <MyButton color={COLOR1} option='Cafes' name='cafes'/>
-                <MyButton color={COLOR1} option='Chinese' name='chinese'/>
-                <MyButton color={COLOR2} option='Fast food' name='hotdogs'/>
+            <View style={styles.body}>
+            {options.map((item, index) => 
+                (<MyButton 
+                    color={getColor(index)}
+                    option={item.option}
+                    name={item.name}
+                    select={ () => { 
+                        selected[index]= true;
+                        setSelected(selected);
+                    }}
+                    unselect={ () => {
+                        selected[index]= false;
+                        setSelected(selected);
+                    }}
+                />)
+            )}
             </View>
-
-            <View style={common.horizontal}>
-                <MyButton color={COLOR1} option='Indian' name='indpak'/>
-                <MyButton color={COLOR2} option='Japanese' name='japanese'/>
-                <MyButton color={COLOR3} option='Kopitiam' name='kopitiam'/>
-            </View>
-
-            <View style={common.horizontal}>
-                <MyButton color={COLOR2} option='Korean' name='korean'/>
-                <MyButton color={COLOR3} option='Malaysian' name='malaysian'/>
-                <MyButton color={COLOR4} option='Mexican' name='mexican'/>
-            </View>
-
-            <View style={common.horizontal}>
-                <MyButton color={COLOR3} option='Thai' name='thai'/>
-                <MyButton color={COLOR4} option='Vietnamese' name='vietnamese'/>
-                <MyButton color={COLOR3} option='Gluten-Free' name='gluten_free'/>
-            </View>
-
-            <View style={common.horizontal}>
-                <MyButton color={COLOR4} option='Halal' name='halal'/>
-                <MyButton color={COLOR3} option='Seafood' name='seafood'/>
-                <MyButton color={COLOR2} option='Vegan' name='vegan'/>
-            </View>
-
-            <View style={common.horizontal}>
-                <MyButton color={COLOR2} option='Vegetarian' name='vegetarian'/>
-            </View>
-
-            <Text>{dietaryOps}</Text>
 
             <TouchableOpacity 
                 style={buttons.clear}
@@ -113,27 +127,35 @@ export const DietaryOpsScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    body: {
+      justifyContent: 'center',
+      alignContent: 'center',
+      flexWrap: 'wrap',
+      flexDirection: 'row'
+    },
     buttonBase: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 30,
-        marginHorizontal: 10,
-        marginVertical: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        fontSize: 18,
-    },
-    buttonDisabled: {
-        width: 241,
-        height: 56,
-        borderRadius: 30,
-        backgroundColor: '#d3d3d3',
-        marginBottom: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-})
+          paddingVertical: width*0.024,
+          paddingHorizontal: width*0.04,
+          borderRadius: 30,
+          marginHorizontal: width*0.02,
+          marginVertical: width*0.015,
+          justifyContent: 'center',
+          alignItems: 'center',
+      },
+      buttonText: {
+          color: '#ffffff',
+          fontWeight: 'bold',
+          fontSize: 18,
+      },
+      buttonDisabled: {
+          paddingVertical: width*0.024,
+          paddingHorizontal: width*0.04,
+          borderRadius: 30,
+          borderColor: '#ffffff',
+          borderWidth: width*0.01,
+          marginHorizontal: width*0.01,
+          marginVertical: width*0.005,
+          justifyContent: 'center',
+          alignItems: 'center',
+      }
+  });

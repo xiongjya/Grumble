@@ -95,6 +95,33 @@ export const joinRoom = async (sessionCode, userID, onFailure) => {
     }
 }
 
+export const updateCategories = async (sessionCode, categories) => {
+    try {
+        const catRef = database
+                        .ref('rooms/' + sessionCode + '/categories');
+        await catRef.once('value', snap => {
+            let obj = {};
+            if (snap.exists()) {
+                obj = snap.val();
+                for (let i = 0, len = categories.length; i < len; i++) {
+                    const cat = categories[i];
+                    if (!snap.hasChild(cat)) {
+                        obj = {...obj, [cat] : true};
+                    }
+                }
+            } else {
+                for (let i = 0, len = categories.length; i < len; i++) {
+                    const cat = categories[i];
+                    obj = {...obj, [cat] : true};
+                }
+            }
+            catRef.set(obj);
+        })
+    } catch (err) {
+        alert(err);
+    }
+}
+
 export const updateRestaurants = async (sessionCode, restaurants, onSuccess) => {
     try {
         for (let i = 0, len = restaurants.length; i < len; i++) {
