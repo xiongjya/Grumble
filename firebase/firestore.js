@@ -27,14 +27,6 @@ export const createChat = async (pin, userId, displayName) => {
                         createdAt: new Date().getTime(),
                         system: true
                     });
-
-        /*
-        await db.collection('USERS')
-                .doc(userId)
-                .collection('chats')
-                .doc(pin)
-                .set({});
-        */
     } catch (error) {
         alert(error);
     }
@@ -111,6 +103,48 @@ export const deleteChat = async (chatId, userId) => {
         .collection('chats')
         .doc(chatId)
         .delete()
+        .catch(error => {
+            alert(error);
+        });
+};
+
+export const addHistory = async (userId, restaurant) => {
+    await db.collection('USERS')
+        .doc(userId)
+        .collection('history')
+        .doc(restaurant.name)
+        .set({
+            name: restaurant.name,
+            location: restaurant.location,
+            favourited: false,
+            addedAt: new Date().getTime()
+        })
+        .catch(error => {
+            alert(error);
+        });
+};
+
+export const addFavourites = async (userId, restaurant) => {
+    await db.collection('USERS')
+        .doc(userId)
+        .collection('history')
+        .doc(restaurant.name)
+        .update({
+            favourited: true
+        })
+        .catch(error => {
+            alert(error);
+        });
+};
+
+export const removeFavourites = async (userId, restaurant) => {
+    await db.collection('USERS')
+        .doc(userId)
+        .collection('history')
+        .doc(restaurant.name)
+        .update({
+            favourited: false
+        })
         .catch(error => {
             alert(error);
         });

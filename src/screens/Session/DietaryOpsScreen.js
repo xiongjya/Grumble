@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
+import { Dimensions, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import { useSelector } from 'react-redux';
 
 import * as Authentication from '../../../firebase/auth';
@@ -10,6 +10,8 @@ import { selectPin, selectStart } from '../../redux/sessionSlice';
 import common from '../../styles/common';
 import buttons from '../../styles/buttons';
 import text from '../../styles/text';
+
+const width = Dimensions.get("window").width;
 
 function getColor(x) {
     switch (x % 4) {
@@ -39,7 +41,7 @@ const MyButton = (props) => {
         return (
             <TouchableOpacity
                     style= { selected
-                        ? [styles.buttonBase, {backgroundColor: props.color, borderColor: '#ffffff', borderWidth: 5}]
+                        ? [styles.buttonBase, {backgroundColor: props.color}, styles.selected]
                         : [styles.buttonBase, {backgroundColor: props.color}]}
                     onPress= {onSelected}
             >
@@ -50,7 +52,7 @@ const MyButton = (props) => {
         )
     }
 
-export const selectedScreen = ({ navigation }) => {
+export const DietaryOpsScreen = ({ navigation }) => {
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
     const [selected, setSelected] = useState([].fill(false, 0, 16));
@@ -76,13 +78,13 @@ export const selectedScreen = ({ navigation }) => {
     ]
 
     const onPress = () => {
-        const categories = [];
+        const res = [];
         for (let i = 0 ; i < options.length ; i++ ) {
             if (selected[i]) {
                 res.push(options[i].name);
             }
         }
-        
+        updateCategories(pin, res);
         navigation.navigate('PriceRange');
     };
 
@@ -101,14 +103,15 @@ export const selectedScreen = ({ navigation }) => {
             <View style={styles.body}>
             {options.map((item, index) => 
                 (<MyButton 
+                    key={index}
                     color={getColor(index)}
                     option={item.option}
                     name={item.name}
-                    select={ () => { 
+                    select={() => { 
                         selected[index]= true;
                         setSelected(selected);
                     }}
-                    unselect={ () => {
+                    unselect={() => {
                         selected[index]= false;
                         setSelected(selected);
                     }}
@@ -128,34 +131,29 @@ export const selectedScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     body: {
-      justifyContent: 'center',
-      alignContent: 'center',
-      flexWrap: 'wrap',
-      flexDirection: 'row'
+        justifyContent: 'center',
+        alignContent: 'center',
+        flexWrap: 'wrap',
+        flexDirection: 'row'
     },
     buttonBase: {
-          paddingVertical: width*0.024,
-          paddingHorizontal: width*0.04,
-          borderRadius: 30,
-          marginHorizontal: width*0.02,
-          marginVertical: width*0.015,
-          justifyContent: 'center',
-          alignItems: 'center',
-      },
-      buttonText: {
-          color: '#ffffff',
-          fontWeight: 'bold',
-          fontSize: 18,
-      },
-      buttonDisabled: {
-          paddingVertical: width*0.024,
-          paddingHorizontal: width*0.04,
-          borderRadius: 30,
-          borderColor: '#ffffff',
-          borderWidth: width*0.01,
-          marginHorizontal: width*0.01,
-          marginVertical: width*0.005,
-          justifyContent: 'center',
-          alignItems: 'center',
-      }
+        paddingVertical: width*0.024,
+        paddingHorizontal: width*0.04,
+        borderRadius: 30,
+        marginHorizontal: width*0.02,
+        marginVertical: width*0.015,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    selected: {
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        paddingVertical: width*0.024 - 2,
+        paddingHorizontal: width*0.04 - 2
+    }
   });

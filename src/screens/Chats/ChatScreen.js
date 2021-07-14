@@ -123,39 +123,39 @@ const ChatScreen = ( {navigation} ) => {
     };
 
     const renderChat = ({ item }) => (
-        <Swipeable
-            renderRightActions={ () => rightAction(item._id) }
-            renderLeftActions={ () => leftAction(item.name, item._id) }
+        <TouchableOpacity
+            onPress={() => navigation.navigate('ChatRoom', { thread: item })}
         >
-            <TouchableOpacity
-                onPress={() => navigation.navigate('ChatRoom', { thread: item })}
-            >
             <ListItem
                 bottomDivider='true'
                 containerStyle={styles.chat}
             >
-                <Avatar 
-                    source={require('../../../assets/images/user.png')}
-                    rounded='true'
-                    size='medium'
-                />
+                <ListItem.Swipeable
+                    leftContent={ () => leftAction(item.name, item._id) }
+                    rightContent={ () => rightAction(item._id) }
+                >
+                    <Avatar 
+                        source={require('../../../assets/images/user.png')}
+                        rounded='true'
+                        size='medium'
+                    />
 
-                <ListItem.Content style={styles.content}>
-                    <ListItem.Title
-                        style={styles.name}
-                    >
-                        {item.name}
-                    </ListItem.Title>
-                    
-                    <ListItem.Subtitle
-                        style={styles.latestMessage}
-                    >
-                        {item.latestMessage.text}
-                    </ListItem.Subtitle>
-                </ListItem.Content>
+                    <ListItem.Content style={styles.content}>
+                        <ListItem.Title
+                            style={styles.name}
+                        >
+                            {item.name}
+                        </ListItem.Title>
+                        
+                        <ListItem.Subtitle
+                            style={styles.latestMessage}
+                        >
+                            {item.latestMessage.text}
+                        </ListItem.Subtitle>
+                    </ListItem.Content>
+                </ListItem.Swipeable>
             </ListItem>
-            </TouchableOpacity>
-        </Swipeable>
+        </TouchableOpacity>
     );
 
     useEffect(() => {

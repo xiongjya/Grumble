@@ -1,54 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Keyboard, SafeAreaView, ScrollView, StyleSheet,Text,TextInput, TouchableOpacity, View } from 'react-native';
-import { Icon, Image, ListItem, Overlay } from 'react-native-elements';
-import { CommonActions } from "@react-navigation/native";
+import { Image, Keyboard, Linking, SafeAreaView, ScrollView, StyleSheet,Text,TextInput, TouchableOpacity, View } from 'react-native';
+import { Icon, ListItem, Overlay } from 'react-native-elements';
+import { CommonActions } from '@react-navigation/native';
 
-import * as Authentication from "../../../firebase/auth";
+import * as Authentication from '../../../firebase/auth';
+import * as Firestore from '../../../firebase/firestore';
 
-import mockHistory from '../../../assets/data/mockHistory';
-
-import buttons from '../../styles/buttons';
-import common from '../../styles/common';
 import text from '../../styles/text';
-import { FlatList } from 'react-native';
-
-const renderHistory = ({ item }) => {
-    return (
-      <ListItem>
-        <ListItem.Content>
-          <ListItem.Title style={text.bold}>{item.name}</ListItem.Title>
-          <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
-        </ListItem.Content>
-
-        <Icon
-          name='star'
-          type='antdesign'
-          size={20}
-          color='#ffd996'
-        />
-      </ListItem>
-    );
-}
-
-const Dietary = (props) => {
-    const { diets } = props;
-    return (
-        <View style = {styles.info}>
-            {diets.map((diet, index) =>
-                <View 
-                  style = {styles.infoContainer}
-                  key={index}
-                >
-                    <Text style = {styles.infoText}>{diet}</Text>
-                </View>
-            )}
-        </View>
-    );
-}
-
-const exampleDiet = ["vegan", "gluten-free"];
 
 export const ProfileScreen = ({navigation}) => {
+  const [user, setUser] = useState({});
+
   // for viewing the profile picture in large and giving the option to Change Profile Photo
   const [profile, setProfile] = useState(false);
 
@@ -63,11 +25,72 @@ export const ProfileScreen = ({navigation}) => {
 
   const [photo, setPhoto] = useState(null);
 
-  useEffect(() => {
-    const displayPhoto = Authentication.getCurrentUserPhoto();
+  const [history, setHistory] = useState([]);
 
-    setPhoto(displayPhoto);
-  })
+  const [favourited, setFavourited] = useState([]);
+
+  const History = ({ item }) => {
+    const [star, setStar] = useState(item.favourited);
+
+    const onPress = () => {
+      if (star) {
+        Firestore.removeFavourites(user.uid, item);
+      } else {
+        Firestore.addFavourites(user.uid, item);
+      }
+      setStar(!star);
+    }
+
+    return (
+      <TouchableOpacity
+        onPress={() => googleRestaurant(item)}
+      >
+        <ListItem>
+          <ListItem.Content>
+            <ListItem.Title style={text.bold}>{item.name}</ListItem.Title>
+            <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+          </ListItem.Content>
+
+          <Icon
+            name={star ? 'star' : 'staro'}
+            type='antdesign'
+            size={20}
+            color='#ffd996'
+            onPress={(onPress)}
+          />
+        </ListItem>
+      </TouchableOpacity>
+    );
+  }
+
+  const Favourite = ({ item }) => {
+      return (
+        <TouchableOpacity
+          onPress={() => googleRestaurant(item)}
+        >
+          <ListItem
+          >
+            <ListItem.Content>
+              <ListItem.Title style={text.bold}>{item.name}</ListItem.Title>
+              <ListItem.Subtitle>{item.location}</ListItem.Subtitle>
+            </ListItem.Content>
+          </ListItem>
+        </TouchableOpacity>
+      )
+  }
+
+  const googleRestaurant = (restaurant) => {
+    let url = 'https://www.google.com/search?q=';
+
+    const name = restaurant.name.replace(' ', '+');
+    url += name;
+
+    const location = restaurant.location.replace(' ', '+');
+    url += '+';
+    url += location;
+
+    return Linking.openURL(url);
+  }
 
   const onLogoutPress = () => Authentication.logout(
     () => navigation.dispatch(CommonActions.reset({
@@ -97,6 +120,40 @@ export const ProfileScreen = ({navigation}) => {
       return alert(error);
     }
   );
+
+  useEffect(() => {
+    const user = Authentication.getCurrentUserObject();
+
+    const displayPhoto = user.photoURL;
+    setPhoto(displayPhoto);
+
+    const userId = user.uid;
+
+    const historyListener = Firestore.db 
+        .collection('USERS')
+        .doc(userId)
+        .collection('history')
+        .onSnapshot((querySnapshot) => {
+          const restaurants = querySnapshot.docs.map((doc) => {
+            const firebaseData = doc.data();
+
+            const data = {
+              _id: doc.id,
+              ...firebaseData
+            }
+
+            return data;
+          })
+
+          const favourites = restaurants.filter(res => res.favourited);
+
+          setUser(user);
+          setHistory(restaurants);
+          setFavourited(favourites);
+        })
+
+    return () => historyListener();
+  }, []);
   
     return (
         <SafeAreaView>
@@ -203,24 +260,35 @@ export const ProfileScreen = ({navigation}) => {
             </View>
           </Overlay>
           
-          <View style={styles.body}>
             <View style={styles.bodyContent}>
               <Text style={styles.name}>{Authentication.getCurrentUserName()}</Text>
 
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Favourite Restaurants</Text>  
-              </TouchableOpacity>
-                            
-              <View style={styles.buttonContainer}>
-                <FlatList
-                  data={mockHistory}
-                  renderItem={renderHistory}
-                  keyExtractor={(item) => item.id}
-                  style={{borderRadius: 20}}
-                />
+              <View style={{margin: 10}}>
+                <Text style={[styles.section, text.bold]}>Favourites</Text>  
+                <View style={styles.buttonContainer}>
+                  <ScrollView style={{borderRadius: 30}}>
+                    {favourited.map((item, index) => 
+                      (<Favourite
+                        item={item}
+                        key={index}
+                      />))}
+                  </ScrollView>
+                </View>
               </View>
+
+              <View style={{margin: 10}}>            
+                <Text style={[styles.section, text.bold]}>History</Text>               
+                <View style={styles.buttonContainer}>
+                  <ScrollView style={{borderRadius: 30}}>
+                    {history.map((item, index) => 
+                      (<History
+                        item={item}
+                        key={index}
+                      />))}
+                  </ScrollView>
+                </View>
+              </View> 
             </View>
-        </View>
       </SafeAreaView>
     )
 }
@@ -228,7 +296,7 @@ export const ProfileScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   header:{
     backgroundColor: "#ffd966",
-    height:200,
+    height: 200,
   },
   avatar: {
     width: 130,
@@ -270,42 +338,19 @@ const styles = StyleSheet.create({
     shadowOpacity:0.8,
     marginBottom: 5
   },
-  body:{
-    marginTop:40,
-  },
   bodyContent: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding:30,
+    padding: 30
   },
-  info: {
-    marginTop:10,
-    height:20,
-    justifyContent: 'space-evenly',
-    alignContent: 'center',
-    flexDirection: 'row',
-    marginBottom:10,
-    width:300,
-  },
-  infoContainer: {
-    height:25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width:90,
-    borderRadius:20,
-    marginHorizontal:10,
-    backgroundColor: "#ffd966",
-  },
-  infoText: {
-    fontSize:12,
-    color: "#696969",
-    textAlign: 'center'
+  section: {
+    marginLeft: 20
   },
   buttonContainer: {
     margin: 10,
-    height: 130,
+    height: 165,
     width: 350,
-    padding: 3,
+    padding: 5,
     justifyContent: 'center',
     alignItems: 'stretch',
     borderRadius: 20,
