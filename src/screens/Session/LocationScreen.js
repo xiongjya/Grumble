@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TextInput,
+    TouchableOpacity, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Slider from '@react-native-community/slider';
 import * as Location from 'expo-location';
@@ -17,11 +18,13 @@ export const LocationScreen = ({navigation}) => {
     const pin = useSelector(selectPin);
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
+    const [choseCurrLoc, setChoseCurrLoc] = useState(false);
     const [currLocation, setCurrLocation] = useState(false);
     const [filledLocation, setFilledLocation] = useState('');
     const [radius, setRadius] = useState(0.5);
 
     const getCurrentLocation = async () => {
+
         const enabled = await Location.hasServicesEnabledAsync();
 
         if (enabled) {
@@ -41,7 +44,26 @@ export const LocationScreen = ({navigation}) => {
         }
     };
 
+    const LocationObtainedDisplay = () => {
+        return <View style={common.horizontal}>
+            <Text style={styles.address}>Current location obtained:  </Text>
+            {choseCurrLoc
+                ? (latitude === 0 && longitude === 0)
+                    ? (<ActivityIndicator animating={choseCurrLoc} color='#ffffff'/>)
+                    : (<Icon
+                        name='check'
+                        type='font-awesome-5'
+                        color='#6aa84f'
+                        iconStyle={{fontSize: 17}}
+                    />)
+                : null
+            }
+        </View>
+    }
+
     const onAddressFill = (text) => {
+        setChoseCurrLoc(false);
+        setCurrLocation(false);
         setFilledLocation(text);
     }
 
@@ -62,7 +84,7 @@ export const LocationScreen = ({navigation}) => {
             navigation.navigate('DietaryOps');
 
         } else {
-            alert('Empty fields, either use your current location or enter an address. If you had used your current location, wait for the cross to change to a tick to ensure that we have your location.');
+            alert('Empty fields, either use your current location or enter an address.');
         }
     };
 
@@ -81,39 +103,38 @@ export const LocationScreen = ({navigation}) => {
                     Choose your location:
                 </Text>
                 <TouchableOpacity 
-                    onPress={getCurrentLocation}
-                    style= {styles.useMyLocation}
+                    onPress={() => {
+                        setChoseCurrLoc(true);
+                        setFilledLocation('');
+                        getCurrentLocation();
+                    }}
+                    style= {[styles.useMyLocation,
+                        choseCurrLoc
+                            ?  {borderRadius: 28, borderWidth: 2,
+                                borderColor: '#ffffff'}
+                            : {borderRadius: 30}
+                        ]}
                 >
                     <Text style= {text.normal}>
                         Use my location
                     </Text>
                 </TouchableOpacity>
-                <View style={common.horizontal}>
-                    <Text style={styles.address}>Current location obtained:  </Text>
-                    {(latitude === 0 && longitude === 0)
-                        ? (<Icon
-                        name='times'
-                        type='font-awesome-5'
-                        color='#c84031'
-                        iconStyle={{fontSize: 17}}
-                        />)
-                        : (<Icon
-                            name='check'
-                            type='font-awesome-5'
-                            color='#6aa84f'
-                            iconStyle={{fontSize: 17}}
-                        />)}
-                </View>
+
+                <LocationObtainedDisplay />
 
                 <Text style= {styles.orText}>OR</Text>
 
-                <View style= {styles.filledLocation}>
+                <View style= {[styles.filledLocation,
+                        filledLocation
+                            ? {backgroundColor: 'rgba(190, 117, 228, 0.3)'}
+                            : {}
+                ]}>
                     <TextInput
                         onChangeText={onAddressFill}
                         placeholder='Enter address'
-                        style={text.normal}
+                        style={[text.normal, {paddingLeft: 20}]}
                         value={filledLocation}
-                        selectionColor='#fac219'
+                        selectionColor='#be75e4'
                     />
                 </View>
                 <Text style={text.question}>
@@ -123,7 +144,7 @@ export const LocationScreen = ({navigation}) => {
                     style={{width: '70%', height: 40}}
                     minimumValue={0.5}
                     maximumValue={5}
-                    minimumTrackTintColor="#FFFFFF"
+                    minimumTrackTintColor='rgb(190, 117, 228)'
                     maximumTrackTintColor="#rgba(255, 255, 255, 0.4)"
                     onValueChange={onRadiusChange}
                 />
@@ -144,8 +165,7 @@ export const LocationScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
     useMyLocation: {
-        backgroundColor: '#FAC219',
-        borderRadius: 30,
+        backgroundColor: '#be75e4',
         width: '70%',
         height: 50,
         marginBottom: 10,
@@ -156,13 +176,12 @@ const styles = StyleSheet.create({
         color: 'dimgray'
     },
     filledLocation: {
-        borderColor: '#FAC219',
+        borderColor: '#be75e4',
         borderWidth: 2,
         borderRadius: 30,
         width: '70%',
         height: 50,
         marginBottom: 45,
-        alignItems: 'center',
         justifyContent: 'center'
     },
     orText: {

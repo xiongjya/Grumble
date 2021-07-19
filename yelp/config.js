@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import * as database from '../firebase/database';
+import * as Database from '../firebase/database';
 
 const yelp = axios.create({
     baseURL : "https://api.yelp.com/v3/businesses",
@@ -9,11 +9,10 @@ const yelp = axios.create({
     }
 });
 
-export const search = async (latitude, longitude, location, radius) => {
-    const priceCeil = database.getPriceCeil();
-
-    const dietOps = database.getDietaryOptions();
-
+export const search = async (latitude, longitude, location, radius, pin) => {
+    let priceCeil;
+    const dietOps = [];
+    console.log('1');
     const getPrices = x => {
         const arr = [];
         for (let i = 1; i <= x; i++) {
@@ -21,6 +20,12 @@ export const search = async (latitude, longitude, location, radius) => {
         }
         return arr.toString();
     }
+
+    await Database
+        .getPriceCeil(pin)
+        .then(x => {priceCeil = x });
+    await Database.getDietaryOptions(pin, dietOps);
+    
 
     const params = {
         categories: dietOps.join(','),
@@ -36,16 +41,12 @@ export const search = async (latitude, longitude, location, radius) => {
         params.latitude = latitude;
         params.longitude = longitude;
     }
-
     try {
         const response = await yelp.get('/search', { params });
-
-        let restaurants = response.data.businesses;
-        restaurants = restaurants
-                        .filter(item => item.is_closed !== false)
-                        .slice(0, 10);
-
-        return restaurants;
+        const restaurants = response.data.businesses;
+        return restaurants
+        .filter(item => item.is_closed === false)
+        .slice(0, 10);;
     } catch (err) {
         alert(err);
     }

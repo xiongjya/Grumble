@@ -5,9 +5,11 @@ import common from '../../styles/common';
 import text from '../../styles/text';
 import { PURPLE } from '../../styles/common';
 
+import { Loading } from '../../components/Loading';
+
 import { database } from '../../../firebase/database';
 
-import { selectPin } from '../../redux/sessionSlice';
+import { selectPin, selectSessionSize } from '../../redux/sessionSlice';
 
 const { height, width } = Dimensions.get('window');
 const SPACING = 10;
@@ -79,46 +81,50 @@ export const ResultsScreen = () => {
     const [top, setTop] = useState([]);
     const [usersUndone, setUsersUndone] = useState(NaN);
     const pin = useSelector(selectPin);
+    const sessionSize = useSelector(selectSessionSize);
     const scrollX = useRef(new Animated.Value(0)).current;
 
-    const waiting = (<Text style= {[text.normal, styles.margin]}> Waiting for {usersUndone} users... </Text>)
+    const waiting = (
+    <View style= {{ alignItems: 'center', justifyContent: 'center' }}>
+        <Text style= {[text.normal, styles.waiting]}> Waiting for {usersUndone} more... </Text>
+        <Loading/>
+    </View>)
+
+    useEffect(() => {
+        const usersDoneRef = database.ref('rooms/' + pin + '/usersDone');
+        const updateNum = snap => {
+            setUsersUndone(sessionSize - snap.val());
+        }
+        usersDoneRef
+        .on('value', updateNum);
+        return () => {
+            usersDoneRef.off('value', updateNum);
+        };
+    });
 
     useEffect(() => {
         const roomRef = database.ref('rooms/' + pin);
-        roomRef
-        .on('value', async (snap) => {
-            const data = snap.val();
-            const numUndone = data.usersJoined - data.usersDone;
-            const handleData = (snap) => {
-                const restaurants = [];
-                snap.forEach((res) => {
-                restaurants.push(res.val());
-                });
-        
-                if (restaurants) {
-                restaurants.reverse();
-                setTop([{id: 'dummy1'}, ...restaurants, {id: 'dummy2'}]);
-                }
-            };
-
-            setUsersUndone(numUndone);
-            if (numUndone === 0) {
-                try {
-                    await roomRef
-                        .child('restaurants')
-                        .orderByChild('yes')
-                        .limitToLast(3)
-                        .once('value', handleData)
-                } catch (err) {
-                    alert(err);
-                }
-                setAllDone(true);
+        const handleData = (snap) => {
+            const restaurants = [];
+            snap.forEach((res) => {
+            restaurants.push(res.val());
+            });
+    
+            if (restaurants) {
+            restaurants.reverse();
+            setTop([{id: 'dummy1'}, ...restaurants, {id: 'dummy2'}]);
             }
-        })
-        return () => {
-            roomRef.off();
         };
-    });
+        if (usersUndone === 0) {
+            roomRef
+            .child('restaurants')
+            .orderByChild('yes')
+            .limitToLast(3)
+            .once('value', handleData)
+            .then(() => { setAllDone(true); })
+            .catch((err) => { alert(err);} )
+        }
+    }, [usersUndone]);
 
     return (
         <View style={[common.container, common.vertical]}>
@@ -129,9 +135,8 @@ export const ResultsScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    margin: {
-        marginBottom: 20,
-        fontSize: 24
+    waiting: {
+        marginBottom: 20
     },
     display: {
         marginHorizontal: SPACING,

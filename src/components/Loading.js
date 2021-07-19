@@ -1,16 +1,16 @@
 import React from 'react';
-import { Image, SafeAreaView, StyleSheet } from 'react-native';
+import { Image, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
 
 export const Loading = () => {
     return (
-        <SafeAreaView style= {styles.container}>
-            <Image 
-                source={require('../../assets/images/loading.gif')}
-                style={styles.image}
-            />
-        </SafeAreaView>
+        <Image 
+            source={require('../../assets/images/loading.gif')}
+            style={styles.image}
+        />
     )
 }
+
+const SIZE = Dimensions.get('window').width*0.4;
 
 const styles = StyleSheet.create({
     container: {
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffd966'
     },
     image: {
-        height: 230,
-        width: 230,
-        borderRadius: 360
+        height: SIZE,
+        width: SIZE,
+        borderRadius: SIZE
     }
 })

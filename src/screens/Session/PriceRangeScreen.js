@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-elements';
+
+import { Loading } from '../../components/Loading';
 
 import * as Authentication from '../../../firebase/auth';
 import * as Database from '../../../firebase/database';
@@ -9,7 +11,9 @@ import * as Firestore from '../../../firebase/firestore';
 
 import { search } from '../../../yelp/config';
 
-import { selectPin, selectStart } from '../../redux/sessionSlice';
+import { useDispatch } from 'react-redux';
+
+import { setSessionSize, selectPin, selectStart } from '../../redux/sessionSlice';
 import { selectLatitude, selectLongitude, selectLocation, selectDistance, selectDietary } from '../../redux/filterOptionsSlice';
 
 import buttons from '../../styles/buttons';
@@ -20,6 +24,7 @@ export const PriceRangeScreen = ({ navigation }) => {
 
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
+    const dispatch = useDispatch();
     const latitude = useSelector(selectLatitude);
     const longitude = useSelector(selectLongitude);
     const location = useSelector(selectLocation);
@@ -28,59 +33,69 @@ export const PriceRangeScreen = ({ navigation }) => {
     const [price, setPrice] = useState(0);
     const [allDone, setAllDone] = useState(false);
     const [usersUndone, setUsersUndone] = useState(NaN);
+    const roomRef = Database.database.ref('rooms/' + pin);
 
     // to keep track of whether the 'finish' button is pressed // default value should be false
-    const [finish, setFinish] = useState(true);
+    const [finish, setFinish] = useState(false);
 
     const onFinish = () => {
         Database.updatePrice(pin, price);
-        setFinish(true);
+        Database.joinRoom(pin, userId, (num) => { 
+            setFinish(true);
+            dispatch(setSessionSize(num));
+         }, () => { navigation.navigate('Start') });
+        Firestore.joinChat(pin, userId);
+        
+    };
+
+    const onStartSwiping = () => {
+        Database
+        .getRestaurants(pin, navigation)
     };
 
     const waiting = (
         <SafeAreaView style={common.container}>
-            <Text style= {[text.normal, styles.waiting]}> Waiting for {usersUndone} users... </Text>
-
-            {allDone && 
-            (<TouchableOpacity 
+            {allDone
+            ? (<TouchableOpacity 
                 style={[buttons.filled, styles.swipe]}
-                onPress={() => navigation.navigate('Swipe')}
+                onPress={onStartSwiping}
             >
                 <Text style={text.filledText}> START SWIPING! </Text>
-            </TouchableOpacity>)}
+            </TouchableOpacity>)
+            : (<View style= {{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style= {[text.normal, styles.waiting]}> Waiting for {usersUndone} more... </Text>
+                <Loading />
+            </View>)}
         </SafeAreaView>
     );
 
     const DOLLAR = require('../../../assets/images/rate.png')
 
     useEffect(() => {
+        const updateNum = (snap) => {
+            const data = snap.val();
+            const numUndone = data.usersTotal - data.usersJoined;
+
+            setUsersUndone(numUndone);
+            if (snap.hasChild('restaurants')) setAllDone(true);
+        };
         if (finish) {
-            const roomRef = Database.ref('rooms/' + pin);
-
-            roomRef.on('value', async (snap) => {
-                const data = snap.val();
-                const numUndone = data.usersTotal - data.usersJoined;
-
-                setUsersUndone(numUndone);
-                
-                if (numUndone === 0) {
-                    setAllDone(true);
-
-                    if (start) {
-                        const restaurants = search(latitude, longitude, location, radius);
-                        restaurants.then((res) => {
-                            Database.updateRestaurants(pin, res, () => { navigation.navigate('Swipe') })
-                        });
-                    }
-                } else {
-                    Database.joinRoom(pin, userId, () => { navigation.navigate('Start') });
-                    Firestore.joinChat(pin, userId);
-                }
-                
-            });
+            roomRef.on('value', updateNum);
+        }
+        return () => {
+            roomRef.off('value', updateNum);
         }
     });
 
+    useEffect(() => {
+        if (start && usersUndone === 0) {
+            search(latitude, longitude, location, radius, pin).then(res => {
+                Database.pushRestaurantsToFb(pin, res, () => { setAllDone(true) } );
+             });
+        }
+    }, [usersUndone]);
+
+    
     return (finish)
         ? (waiting)
         : (<SafeAreaView style={[common.container, common.vertical]}>
@@ -98,9 +113,9 @@ export const PriceRangeScreen = ({ navigation }) => {
                 ratingImage={DOLLAR}
                 ratingColor='#ffffff'
                 ratingCount={4}
-                ratingBackgroundColor='#ffd966'
-                tintColor='#ff5733'
-                imageSize={55}
+                ratingBackgroundColor='#rgba(255, 255, 255, 0.4)'
+                tintColor='#ffd966'
+                imageSize={50}
                 onFinishRating={value => setPrice(value)}
                 minValue={1}
                 startingValue={0}
@@ -120,8 +135,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     }, 
     swipe: {
-        position: 'absolute',
-        bottom: 330
+        padding: 10
     },
     waiting: {
         marginBottom: 20
