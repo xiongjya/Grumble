@@ -164,7 +164,7 @@ export const ProfileScreen = ({navigation}) => {
   }, [profile, change, upload, url, photo]);
   
     return (
-        <SafeAreaView>
+        <View>
           <View style={styles.header}>
             <TouchableOpacity 
               style={styles.logoutButton}
@@ -298,14 +298,14 @@ export const ProfileScreen = ({navigation}) => {
                 </View>
               </View> 
             </View>
-      </SafeAreaView>
+      </View>
     )
 }
 
 const styles = StyleSheet.create({
   header:{
     backgroundColor: "#ffd966",
-    height: 200,
+    height: 230,
   },
   avatar: {
     width: 130,
@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
     color: '#be75e4'
   },
   logoutButton: {
-    marginTop: 7,
-    marginRight: 7,
+    marginTop: 38,
+    marginRight: 9,
     alignSelf: 'flex-end',
   },
   name:{

@@ -107,7 +107,6 @@ export const updateCategories = async (sessionCode, categories) => {
             if (snap.exists()) {
                 for (let i = 0, len = categories.length; i < len; i++) {
                     const cat = categories[i];
-                    alert(cat);
                     if (!snap.hasChild(cat)) {
                         catRef.child(cat).set(true);
                     }
