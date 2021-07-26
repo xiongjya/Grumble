@@ -122,6 +122,14 @@ export const ForgotPasswordScreen = ({navigation}) => {
 // button onPress: toggle to next page
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffd966',
+    },
+    
     inputView: {
         borderColor: '#ffd966',
         borderBottomColor: '#fac219',

@@ -9,7 +9,7 @@ import { Loading } from '../../components/Loading';
 
 import { database } from '../../../firebase/database';
 
-import { selectPin, selectSessionSize } from '../../redux/sessionSlice';
+import { selectPin } from '../../redux/sessionSlice';
 
 const { height, width } = Dimensions.get('window');
 const SPACING = 10;
@@ -81,7 +81,7 @@ export const ResultsScreen = () => {
     const [top, setTop] = useState([]);
     const [usersUndone, setUsersUndone] = useState(NaN);
     const pin = useSelector(selectPin);
-    const sessionSize = useSelector(selectSessionSize);
+    const [sessionSize, setSessionSize] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
 
     const waiting = (
@@ -89,6 +89,13 @@ export const ResultsScreen = () => {
         <Text style= {[text.normal, styles.waiting]}> Waiting for {usersUndone} more... </Text>
         <Loading/>
     </View>)
+
+    useEffect(() => {
+        database.ref('rooms/' + pin + '/usersTotal').once('value',
+        snap => {
+            setSessionSize(snap.val());
+        })
+    })
 
     useEffect(() => {
         const usersDoneRef = database.ref('rooms/' + pin + '/usersDone');

@@ -84,8 +84,12 @@ export const DietaryOpsScreen = ({ navigation }) => {
                 res.push(options[i].name);
             }
         }
-        updateCategories(pin, res);
-        navigation.navigate('PriceRange');
+        if (res.length === 0) {
+            alert('Please choose a category.')
+        } else {
+            updateCategories(pin, res);
+            navigation.navigate('PriceRange', { alreadyJoined: false });
+        }
     };
 
     return (
