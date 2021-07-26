@@ -12,7 +12,6 @@ const yelp = axios.create({
 export const search = async (latitude, longitude, location, radius, pin) => {
     let priceCeil;
     const dietOps = [];
-    console.log('1');
     const getPrices = x => {
         const arr = [];
         for (let i = 1; i <= x; i++) {

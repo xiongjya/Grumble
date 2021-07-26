@@ -104,7 +104,7 @@ export const ProfileScreen = ({navigation}) => {
 
   const uploadPhoto = (url) => {
     // only allow valid change when the url ends with .jpg or .png
-    if (!url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+    if (url.match(/\.(jpeg|jpg|gif|png)$/) == null) {
       url = 'https://img.flaticon.com/icons/png/512/149/149071.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF';
     }
 

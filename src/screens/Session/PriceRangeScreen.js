@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     }, 
     swipe: {
-        padding: 10
+        padding: 15
     },
     waiting: {
         marginBottom: 20

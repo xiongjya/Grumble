@@ -12,7 +12,7 @@ export const CardItem = ({
   name,
   price,
   rating,
-  //transactions,
+  transactions,
   website
 }) => {
   const [information, setInformation] = useState(true);
@@ -60,7 +60,7 @@ export const CardItem = ({
           <View style={styles.option}>
             <Text>Transactions: </Text>
 
-            {/* <Options arr={transactions}/> */}
+            {<Options arr={transactions}/>}
           </View>  
 
           <View style={styles.option}>
