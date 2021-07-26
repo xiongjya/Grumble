@@ -24,7 +24,6 @@ export const PriceRangeScreen = ({ route, navigation }) => {
 
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
-    const dispatch = useDispatch();
     const latitude = useSelector(selectLatitude);
     const longitude = useSelector(selectLongitude);
     const location = useSelector(selectLocation);
@@ -41,9 +40,8 @@ export const PriceRangeScreen = ({ route, navigation }) => {
 
     const onFinish = () => {
         Database.updatePrice(pin, price);
-        Database.joinRoom(pin, user.uid, (num) => { 
+        Database.joinRoom(pin, user.uid, () => { 
             setFinish(true);
-            dispatch(setSessionSize(num));
         }, () => { navigation.navigate('Start') });
         Firestore.joinChat(pin, user.uid);
         Firestore.sendMessage(pin, true, user.displayName);
