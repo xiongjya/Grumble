@@ -4,7 +4,7 @@ import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, TextInput, TouchableO
 import { useDispatch } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { checkRoomExists } from '../../../firebase/database';
+import { checkRoomExists, checkRoomJoinable } from '../../../firebase/database';
 import { getCurrentUserId } from '../../../firebase/auth';
 
 import { joined, setPin } from '../../redux/sessionSlice';
@@ -21,6 +21,7 @@ export const StartScreen = ({navigation}) => {
     const [userId, setUserId] = useState('');
 
     useEffect(() => {
+        setUserId(getCurrentUserId());
         dispatch(clearDietary());
     })
 
@@ -61,7 +62,9 @@ export const StartScreen = ({navigation}) => {
                             onPress={() => {
                                 dispatch(joined(false));
                                 dispatch(setPin(sessionPin));
-                                checkRoomExists(sessionPin, () => {navigation.navigate('DietaryOps')});
+                                checkRoomJoinable(sessionPin, userId,
+                                    () => { navigation.navigate('PriceRange', { alreadyJoined: true }) },
+                                    () => { navigation.navigate('DietaryOps')} );
                             }}
                             disabled={sessionPin.length !== 6}
                         >

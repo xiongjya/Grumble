@@ -16,11 +16,14 @@ export const CardItem = ({
   website
 }) => {
   const [information, setInformation] = useState(true);
+  const picture = image_url
+  ? <Image source={{uri: image_url}} style={styles.image}/>
+  : <Image source={require('../../assets/images/cactus_error.png')} style= {styles.image}/>
 
   return (
     <View style={styles.containerCardItem}>
-      <Image source={{uri: image_url}} style={styles.image}/>
-
+      { picture }
+      
       <TouchableOpacity 
         style={styles.info}
         onPress={() => setInformation(information => !information)}>

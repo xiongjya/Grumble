@@ -17,18 +17,36 @@ export const createRoom = async (sessionCode, userNum) => {
     }
 }
 
-export const checkRoomExists = async (sessionCode, onSuccess) => {
+export const checkRoomJoinable = async (sessionCode, userID, onAlreadyJoined, onSuccess) => {
     const roomRef = database.ref('rooms/' + sessionCode);
+    const userRef = database.ref('users/' + userID);
     try {
         await roomRef
         .once('value', (snap) => {
-            if (snap.exists()) { 
-                    onSuccess();
-                } else {
-                    alert("Room does not exist.")
-                }
+            if (snap.exists()) {
+                const roomData = snap.val()
+                userRef.once(
+                    'value',
+                    (snapshot) => {
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            if (userData.rooms) {
+                                if (userData.rooms.includes(sessionCode)) {
+                                    onAlreadyJoined();
+                                    return;
+                                }
+                            }
+                        }
+                        if (roomData.usersJoined === roomData.usersTotal) {
+                            alert("Room has reached capacity.")
+                            return
+                        }
+                        onSuccess();
+                    });
+            } else {
+                alert("Room does not exist.")
             }
-        );
+        });
     } catch (error) {
         alert(error)
     }
@@ -48,9 +66,7 @@ export const joinRoom = async (sessionCode, userID, onSuccess) => {
                         if (snapshot.exists()) {
                             const userData = snapshot.val();
                             if (userData.rooms) {
-                                //return and dont add to room if user alr in room
-                                if (userData.rooms.includes(sessionCode)) return;
-                                //else update user history and add to room
+                                //update user history and add to room
                                 userRef.update({
                                     rooms: [...userData.rooms, sessionCode],
                                 });
@@ -71,9 +87,9 @@ export const joinRoom = async (sessionCode, userID, onSuccess) => {
                                         };
                         roomRef.update(updatedData);
                     });
-                    onSuccess(roomData.usersTotal);
+                    onSuccess();
                 } else {
-                    alert("Room does not exist.")
+                    alert("Room may have been deleted.")
                     onFailure();
                 }
             }

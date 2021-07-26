@@ -13,14 +13,14 @@ import { search } from '../../../yelp/config';
 
 import { useDispatch } from 'react-redux';
 
-import { setSessionSize, selectPin, selectStart } from '../../redux/sessionSlice';
+import { selectPin, selectStart } from '../../redux/sessionSlice';
 import { selectLatitude, selectLongitude, selectLocation, selectDistance, selectDietary } from '../../redux/filterOptionsSlice';
 
 import buttons from '../../styles/buttons';
 import common from '../../styles/common';
 import text from '../../styles/text';
 
-export const PriceRangeScreen = ({ navigation }) => {
+export const PriceRangeScreen = ({ route, navigation }) => {
 
     const start = useSelector(selectStart);
     const pin = useSelector(selectPin);
@@ -34,15 +34,15 @@ export const PriceRangeScreen = ({ navigation }) => {
     const [allDone, setAllDone] = useState(false);
     const [usersUndone, setUsersUndone] = useState(NaN);
     const roomRef = Database.database.ref('rooms/' + pin);
+    const { alreadyJoined } = route.params;
 
     // to keep track of whether the 'finish' button is pressed // default value should be false
     const [finish, setFinish] = useState(false);
 
     const onFinish = () => {
         Database.updatePrice(pin, price);
-        Database.joinRoom(pin, userId, (num) => { 
+        Database.joinRoom(pin, userId, () => { 
             setFinish(true);
-            dispatch(setSessionSize(num));
          }, () => { navigation.navigate('Start') });
         Firestore.joinChat(pin, userId);
         
@@ -79,7 +79,7 @@ export const PriceRangeScreen = ({ navigation }) => {
             setUsersUndone(numUndone);
             if (snap.hasChild('restaurants')) setAllDone(true);
         };
-        if (finish) {
+        if (alreadyJoined || finish) {
             roomRef.on('value', updateNum);
         }
         return () => {
@@ -96,7 +96,7 @@ export const PriceRangeScreen = ({ navigation }) => {
     }, [usersUndone]);
 
     
-    return (finish)
+    return (alreadyJoined || finish)
         ? (waiting)
         : (<SafeAreaView style={[common.container, common.vertical]}>
             <Text style={text.sessionCode}>PIN: {pin}</Text>
