@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity,
-    TouchableWithoutFeedback, View } from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CommonActions } from "@react-navigation/native";
 
 import * as Authentication from "../../../firebase/auth";

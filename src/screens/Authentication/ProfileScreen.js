@@ -102,16 +102,23 @@ export const ProfileScreen = ({navigation}) => {
     }
   );
 
-  const uploadPhoto = (url) => Authentication.changePhoto(
-    { photo: url }, 
-    () => {
-      setUpload(!upload);
-      setUrl('');
-    },
-    (error) => {
-      return alert(error);
+  const uploadPhoto = (url) => {
+    // only allow valid change when the url ends with .jpg or .png
+    if (!url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+      url = 'https://img.flaticon.com/icons/png/512/149/149071.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF';
     }
-  );
+
+    return Authentication.changePhoto(
+      { photo: url }, 
+      () => {
+        setUpload(!upload);
+        setUrl('');
+      },
+      (error) => {
+        return alert(error);
+      }
+    );
+  }
 
   const removePhoto = () => Authentication.changePhoto(
     { photo: 'https://img.flaticon.com/icons/png/512/149/149071.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF' }, 
@@ -153,7 +160,7 @@ export const ProfileScreen = ({navigation}) => {
         })
 
     return () => historyListener();
-  }, []);
+  }, [profile, change, upload, url, photo]);
   
     return (
         <SafeAreaView>
@@ -252,6 +259,7 @@ export const ProfileScreen = ({navigation}) => {
               </TouchableOpacity>
 
               <TouchableOpacity 
+                disabled={url.length === 0}
                 onPress={() => uploadPhoto(url)}
                 style={{marginHorizontal: 30, marginTop: 30}}
               >
@@ -261,7 +269,7 @@ export const ProfileScreen = ({navigation}) => {
           </Overlay>
           
             <View style={styles.bodyContent}>
-              <Text style={styles.name}>{Authentication.getCurrentUserName()}</Text>
+              <Text style={styles.name}>{Authentication.getCurrentUserObject().displayName}</Text>
 
               <View style={{margin: 10}}>
                 <Text style={[styles.section, text.bold]}>Favourites</Text>  
@@ -278,7 +286,7 @@ export const ProfileScreen = ({navigation}) => {
 
               <View style={{margin: 10}}>            
                 <Text style={[styles.section, text.bold]}>History</Text>               
-                <View style={styles.buttonContainer}>
+                <View style={[styles.buttonContainer, {height: 195}]}>
                   <ScrollView style={{borderRadius: 30}}>
                     {history.map((item, index) => 
                       (<History
@@ -348,7 +356,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 10,
-    height: 165,
+    height: 135,
     width: 350,
     padding: 5,
     justifyContent: 'center',

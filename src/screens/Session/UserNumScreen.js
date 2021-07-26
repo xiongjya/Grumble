@@ -15,12 +15,12 @@ import text from '../../styles/text';
 
 export const UserNumScreen = ({ navigation }) => {
     const [userNum, setUserNum] = useState(1);
-    const { uid, displayName } = Authentication.getCurrentUserObject();
+    const { displayName } = Authentication.getCurrentUserObject();
     const pin = useSelector(selectPin);
 
     const onPress = () => {
         Database.createRoom(pin, userNum);
-        Firestore.createChat(pin, uid, displayName);
+        Firestore.createChat(pin, displayName);
         navigation.navigate('Location');
     }
 

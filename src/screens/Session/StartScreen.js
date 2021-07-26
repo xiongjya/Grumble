@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, 
-    TouchableWithoutFeedback, View } from 'react-native';
+import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { useDispatch } from 'react-redux';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { checkRoomExists } from '../../../firebase/database';
-import { getCurrentUserId } from '../../../firebase/auth';
 
 import { joined, setPin } from '../../redux/sessionSlice';
 import { clearDietary } from '../../redux/filterOptionsSlice';
@@ -65,10 +63,11 @@ export const StartScreen = ({navigation}) => {
                             }}
                             disabled={sessionPin.length !== 6}
                         >
-                            <Ionicons 
-                                name= 'ios-checkmark-circle'
-                                size= {40}
-                                color= '#be75e4'/>
+                            <Icon 
+                                type='ionicon'
+                                name='ios-checkmark-circle'
+                                size={40}
+                                color='#be75e4'/>
                         </TouchableOpacity>
                     </View>
                 </View>

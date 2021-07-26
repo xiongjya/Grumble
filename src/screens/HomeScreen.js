@@ -1,5 +1,5 @@
 import React from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Icon } from 'react-native-elements';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SwipeSession } from './Session/SwipeScreen';
 import { ChatHomeScreen } from './Chats/ChatScreen';
@@ -13,16 +13,16 @@ const screenOptions = ({ route }) => ({
 
     if (route.name === 'Swipe') {
         iconName = focused
-            ? 'ios-fast-food'
-            : 'ios-fast-food-outline';
+            ? 'fast-food'
+            : 'fast-food-outline';
     } else if (route.name === 'Chat') {
-        iconName = focused ? 'ios-chatbubble' : 'ios-chatbubble-outline';
+        iconName = focused ? 'chatbubble' : 'chatbubble-outline';
     } else {
-        iconName = focused ? 'ios-person' : 'ios-person-outline';
+        iconName = focused ? 'person' : 'person-outline';
     }
 
     // You can return any component that you like here!
-    return <Ionicons name={iconName} size={size} color={color} />;
+    return <Icon type='ionicon' name={iconName} size={size} color={color} />;
   },
 })
 

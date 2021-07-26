@@ -29,7 +29,7 @@ export const PriceRangeScreen = ({ navigation }) => {
     const longitude = useSelector(selectLongitude);
     const location = useSelector(selectLocation);
     const radius = useSelector(selectDistance);
-    const userId = Authentication.getCurrentUserId();
+    const [user, setUser] = useState(Authentication.getCurrentUserObject());
     const [price, setPrice] = useState(0);
     const [allDone, setAllDone] = useState(false);
     const [usersUndone, setUsersUndone] = useState(NaN);
@@ -40,12 +40,12 @@ export const PriceRangeScreen = ({ navigation }) => {
 
     const onFinish = () => {
         Database.updatePrice(pin, price);
-        Database.joinRoom(pin, userId, (num) => { 
+        Database.joinRoom(pin, user.uid, (num) => { 
             setFinish(true);
             dispatch(setSessionSize(num));
-         }, () => { navigation.navigate('Start') });
-        Firestore.joinChat(pin, userId);
-        
+        }, () => { navigation.navigate('Start') });
+        Firestore.joinChat(pin, user.uid);
+        Firestore.sendMessage(pin, true, user.displayName);
     };
 
     const onStartSwiping = () => {

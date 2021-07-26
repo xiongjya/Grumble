@@ -53,13 +53,7 @@ export const changePhoto = async ({ photo }, onSuccess, onError) => {
   }
 }
 
-export const getCurrentUserId = () => auth.currentUser ? auth.currentUser.uid : null;
-
-export const getCurrentUserName = () => auth.currentUser ? auth.currentUser.displayName : null;
-
 export const getCurrentUserObject = () => auth.currentUser ? auth.currentUser.toJSON() : null;
-
-export const getCurrentUserPhoto = () => auth.currentUser ? auth.currentUser.photoURL : null;
 
 export const setOnAuthStateChanged = (onUserAuthenticated, onUserNotFound) => auth.onAuthStateChanged((user) => {
   if (user) {

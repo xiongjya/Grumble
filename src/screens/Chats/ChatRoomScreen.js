@@ -94,7 +94,7 @@ export const ChatRoomScreen = ({ route, navigation }) => {
                 style: {backgroundColor: '#ffd966'}
             }}
             messages={messages}
-            onSend={(msg) => Firestore.sendMessage(thread, msg, currentUser)}
+            onSend={(msg) => Firestore.sendMessage(thread._id, msg, currentUser)}
             renderBubble={renderBubble}
             renderLoading={renderLoading}
             scrollToBottom

@@ -23,6 +23,8 @@ const ChatScreen = ( {navigation} ) => {
     const [visible, setVisible] = useState(false);
     const [newName, setNewName] = useState('');
 
+    const [user, setUser] = useState(Authentication.getCurrentUserObject());
+
     const refresh = () => (
         <Icon
             name='refresh-cw'
@@ -49,9 +51,10 @@ const ChatScreen = ( {navigation} ) => {
         }
     }
 
-    const rightAction = ( id ) => {
+    const rightAction = ( pin ) => {
         const handleDeletePress = () => {
-           Firestore.deleteChat(id, Authentication.getCurrentUserId());
+           Firestore.sendSystemMessage(pin, false, user.displayName);
+           Firestore.deleteChat(pin, user.uid);
            
            setSearch('');
         };
@@ -73,9 +76,9 @@ const ChatScreen = ( {navigation} ) => {
         )    
     };
 
-    const leftAction = ( oldname, id ) => {
+    const leftAction = ( oldname, pin ) => {
         const handleRenamePress = () => {
-           Firestore.renameChat(id, newName);
+           Firestore.renameChat(pin, newName);
            
            setNewName('');
            setVisible(!visible);
@@ -123,6 +126,10 @@ const ChatScreen = ( {navigation} ) => {
     };
 
     const renderChat = ({ item }) => (
+        <Swipeable
+            renderLeftActions={ () => leftAction(item.name, item._id) }
+            renderRightActions={ () => rightAction(item._id) }
+        >
         <TouchableOpacity
             onPress={() => navigation.navigate('ChatRoom', { thread: item })}
         >
@@ -130,10 +137,6 @@ const ChatScreen = ( {navigation} ) => {
                 bottomDivider='true'
                 containerStyle={styles.chat}
             >
-                <ListItem.Swipeable
-                    leftContent={ () => leftAction(item.name, item._id) }
-                    rightContent={ () => rightAction(item._id) }
-                >
                     <Avatar 
                         source={require('../../../assets/images/user.png')}
                         rounded='true'
@@ -153,13 +156,13 @@ const ChatScreen = ( {navigation} ) => {
                             {item.latestMessage.text}
                         </ListItem.Subtitle>
                     </ListItem.Content>
-                </ListItem.Swipeable>
             </ListItem>
         </TouchableOpacity>
+        </Swipeable>
     );
 
     useEffect(() => {
-        const uid = Authentication.getCurrentUserId();
+        const { uid } = Authentication.getCurrentUserObject();
 
         const unsubscribe = Firestore.db
             .collection('THREADS')
@@ -170,21 +173,21 @@ const ChatScreen = ( {navigation} ) => {
                     .collection('chats')
                     .onSnapshot((query) => {
                         setChatnames(query.docs.map((queryDoc) => queryDoc.id));
-                    })
+                    });
 
                 const threads = querySnapshot.docs
                     .filter((queryDocumentSnapshot) => chatnames.includes(queryDocumentSnapshot.id))
                     .map((queryDocumentSnapshot) => {
-                    return {
-                        _id: queryDocumentSnapshot.id,
-                        name: '',
-                        latestMessage: {
-                            text: '',
-                            createdAt: new Date().getTime()
-                        },
-                        ...queryDocumentSnapshot.data()
-                    }
-                });
+                        return {
+                            _id: queryDocumentSnapshot.id,
+                            name: '',
+                            latestMessage: {
+                                text: '',
+                                createdAt: new Date().getTime()
+                            },
+                            ...queryDocumentSnapshot.data()
+                        }
+                    });
 
                 setInitialChats(threads);
                 setChats(initialChats);
@@ -198,7 +201,10 @@ const ChatScreen = ( {navigation} ) => {
     }, [pressed]);
     
     return isLoading
-            ? (<Loading />)
+            ? (<SafeAreaView style={[styles.container, {justifyContent: 'center'}]}>
+                <Loading />
+            </SafeAreaView>
+            )
             : (<SafeAreaView style={styles.container}>
                 <View>
                     {Platform.OS === 'ios' ? (

@@ -6,14 +6,14 @@ export const db = firebase.firestore(app);
 
 db.settings({ experimentalForceLongPolling: true });
 
-export const createChat = async (pin, userId, displayName) => {
+export const createChat = async (pin, displayName) => {
     try {
         await db.collection('THREADS')
                 .doc(pin)
                 .set({
                     name: 'Room',
                     latestMessage: {
-                        text: `You have joined a new room created by ${displayName}.`,
+                        text: `A new room is created by ${displayName}.`,
                         createdAt: new Date().getTime()
                     },
                     creator: displayName
@@ -22,11 +22,11 @@ export const createChat = async (pin, userId, displayName) => {
         await db.collection('THREADS')
                 .doc(pin)
                 .collection('MESSAGES')
-                    .add({
-                        text: `You have joined a new room created by ${displayName}.`,
-                        createdAt: new Date().getTime(),
-                        system: true
-                    });
+                .add({
+                    text: `A new room is created by ${displayName}.`,
+                    createdAt: new Date().getTime(),
+                    system: true
+                });
     } catch (error) {
         alert(error);
     }
@@ -44,11 +44,48 @@ export const joinChat = async (pin, userId) => {
     }
 }
 
-export const sendMessage = async (thread, msg, user) => {
+export const sendSystemMessage = async (pin, join, displayName) => {
+    // join === true if someone joins the chat
+    // join === false if someone deletes the chat and leaves the group
+    let msg;
+
+    if (join) {
+        msg = `${displayName} has joined the chat.`;
+    } else {
+        msg = `${displayName} has left the chat.`;
+    }
+
+    await db.collection('THREADS')
+            .doc(pin)
+            .collection('MESSAGES')
+            .add({
+                text: msg,
+                createdAt: new Date().getTime(),
+                system: true
+            })
+            .catch(error => {
+                alert(error);
+            });
+
+    await db.collection('THREADS')
+            .doc(pin)
+            .set({
+                    latestMessage: {
+                        msg,
+                        createdAt: new Date().getTime()
+                    }},
+                { merge: true }
+            )
+            .catch(error => {
+                alert(error);
+            });
+}
+
+export const sendMessage = async (pin, msg, user) => {
     const text = msg[0].text;
 
     await db.collection('THREADS')
-            .doc(thread._id)
+            .doc(pin)
             .collection('MESSAGES')
             .add({
                 text,
@@ -63,25 +100,24 @@ export const sendMessage = async (thread, msg, user) => {
                 alert(error);
             });
 
-    await db
-        .collection('THREADS')
-        .doc(thread._id)
-        .set({
-                latestMessage: {
-                    text,
-                    createdAt: new Date().getTime()
-                }},
-            // updates fields in a document or creates that document if it doesn’t exist, does not overwrite entire document
-            { merge: true }
-        )
-        .catch(error => {
-            alert(error);
-        });
+    await db.collection('THREADS')
+            .doc(pin)
+            .set({
+                    latestMessage: {
+                        text,
+                        createdAt: new Date().getTime()
+                    }},
+                // updates fields in a document or creates that document if it doesn’t exist, does not overwrite entire document
+                { merge: true }
+            )
+            .catch(error => {
+                alert(error);
+            });
 };
 
-export const renameChat = async (chatId, newName) => {
+export const renameChat = async (pin, newName) => {
     await db.collection('THREADS')
-            .doc(chatId)
+            .doc(pin)
             .update({
                 name: newName
             })
@@ -90,9 +126,9 @@ export const renameChat = async (chatId, newName) => {
             });
 };
 
-export const deleteChat = async (chatId, userId) => {
+export const deleteChat = async (pin, userId) => {
     await db.collection('THREADS')
-            .doc(chatId)
+            .doc(pin)
             .delete()
             .catch(error => {
                 alert(error);
@@ -101,7 +137,7 @@ export const deleteChat = async (chatId, userId) => {
     await db.collection('USERS')
         .doc(userId)
         .collection('chats')
-        .doc(chatId)
+        .doc(pin)
         .delete()
         .catch(error => {
             alert(error);
@@ -121,7 +157,7 @@ export const addHistory = async (userId, restaurant) => {
         })
         .catch(error => {
             alert(error);
-        });
+        });``
 };
 
 export const addFavourites = async (userId, restaurant) => {
