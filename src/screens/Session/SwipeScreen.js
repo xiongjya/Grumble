@@ -12,6 +12,7 @@ import { SessionCodeScreen } from './SessionCodeScreen';
 import { StartScreen } from './StartScreen';
 import { UserNumScreen } from './UserNumScreen';
 import { ResultsScreen } from './ResultsScreen';
+import { EndScreen } from './EndScreen';
 
 import { swipeRestaurant } from '../../../firebase/database';
 import { selectPin } from '../../redux/sessionSlice';
@@ -78,6 +79,7 @@ export const SwipeSession = () => {
             <Stack.Screen name="PriceRange" component={ PriceRangeScreen } />
             <Stack.Screen name="Swipe" component={ SwipeScreen } />
             <Stack.Screen name="Results" component={ ResultsScreen } />
+            <Stack.Screen name="End" component={ EndScreen } />
         </Stack.Navigator>
     )
 }

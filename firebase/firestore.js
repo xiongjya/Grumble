@@ -45,74 +45,71 @@ export const joinChat = async (pin, userId) => {
 }
 
 export const sendSystemMessage = async (pin, join, displayName) => {
-    // join === true if someone joins the chat
-    // join === false if someone deletes the chat and leaves the group
-    let msg;
+    try {
+        // join === true if someone joins the chat
+        // join === false if someone deletes the chat and leaves the group
+        let msg;
 
-    if (join) {
-        msg = `${displayName} has joined the chat.`;
-    } else {
-        msg = `${displayName} has left the chat.`;
+        if (join) {
+            msg = `${displayName} has joined the chat.`;
+        } else {
+            msg = `${displayName} has left the chat.`;
+        }
+
+        await db.collection('THREADS')
+                .doc(pin)
+                .collection('MESSAGES')
+                .add({
+                    text: msg,
+                    createdAt: new Date().getTime(),
+                    system: true
+                });
+
+        await db.collection('THREADS')
+                .doc(pin)
+                .set({
+                        latestMessage: {
+                            msg,
+                            createdAt: new Date().getTime()
+                        }},
+                    { merge: true }
+                );
+    } catch (error) {
+        alert(error);
     }
-
-    await db.collection('THREADS')
-            .doc(pin)
-            .collection('MESSAGES')
-            .add({
-                text: msg,
-                createdAt: new Date().getTime(),
-                system: true
-            })
-            .catch(error => {
-                alert(error);
-            });
-
-    await db.collection('THREADS')
-            .doc(pin)
-            .set({
-                    latestMessage: {
-                        msg,
-                        createdAt: new Date().getTime()
-                    }},
-                { merge: true }
-            )
-            .catch(error => {
-                alert(error);
-            });
 }
 
 export const sendMessage = async (pin, msg, user) => {
-    const text = msg[0].text;
+    try {
+        const text = msg[0].text;
 
-    await db.collection('THREADS')
-            .doc(pin)
-            .collection('MESSAGES')
-            .add({
-                text,
-                createdAt: new Date().getTime(),
-                user: {
-                    _id: user.uid,
-                    name: user.displayName,
-                    avatar: user.photoURL
-                }
-            })
-            .catch(error => {
-                alert(error);
-            });
+        await db.collection('THREADS')
+                .doc(pin)
+                .collection('MESSAGES')
+                .add({
+                    text,
+                    createdAt: new Date().getTime(),
+                    user: {
+                        _id: user.uid,
+                        name: user.displayName,
+                        avatar: user.photoURL
+                    }
+                });
 
-    await db.collection('THREADS')
-            .doc(pin)
-            .set({
-                    latestMessage: {
-                        text,
-                        createdAt: new Date().getTime()
-                    }},
-                // updates fields in a document or creates that document if it doesn’t exist, does not overwrite entire document
-                { merge: true }
-            )
-            .catch(error => {
-                alert(error);
-            });
+        await db.collection('THREADS')
+                .doc(pin)
+                .set({
+                        latestMessage: {
+                            text,
+                            createdAt: new Date().getTime()
+                        }},
+                    // updates fields in a document or creates that document if it doesn’t exist, does not overwrite entire document
+                    { merge: true }
+                );
+    } catch (error) {
+        alert(error);
+    }
+    
 };
 
 export const renameChat = async (pin, newName) => {
@@ -135,29 +132,31 @@ export const deleteChat = async (pin, userId) => {
             });
 
     await db.collection('USERS')
-        .doc(userId)
-        .collection('chats')
-        .doc(pin)
-        .delete()
-        .catch(error => {
-            alert(error);
-        });
+            .doc(userId)
+            .collection('chats')
+            .doc(pin)
+            .delete()
+            .catch(error => {
+                alert(error);
+            });
 };
 
 export const addHistory = async (userId, restaurant) => {
+    const location = restaurant.location === null ? '-' : restaurant.location;
+
     await db.collection('USERS')
         .doc(userId)
         .collection('history')
         .doc(restaurant.name)
         .set({
             name: restaurant.name,
-            location: restaurant.location,
+            location: location,
             favourited: false,
             addedAt: new Date().getTime()
         })
         .catch(error => {
             alert(error);
-        });``
+        });
 };
 
 export const addFavourites = async (userId, restaurant) => {

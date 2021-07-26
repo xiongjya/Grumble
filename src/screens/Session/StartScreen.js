@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontSize: 15,
         marginBottom: 30,
+        fontWeight: 'bold'
     },
     startText: {
         color: '#ffd966',
@@ -94,7 +95,9 @@ const styles = StyleSheet.create({
     startBtn: {
         width: 232,
         height: 73,
-        marginBottom: 30
+        marginTop: 0,
+        marginBottom: 30,
+        
     },
     enterSP: {
         borderColor: '#be75e4',
