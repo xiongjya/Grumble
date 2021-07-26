@@ -140,6 +140,7 @@ export const ProfileScreen = ({navigation}) => {
         .collection('USERS')
         .doc(userId)
         .collection('history')
+        .orderBy('addedAt', 'desc')
         .onSnapshot((querySnapshot) => {
           const restaurants = querySnapshot.docs.map((doc) => {
             const firebaseData = doc.data();

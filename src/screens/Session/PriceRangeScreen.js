@@ -44,7 +44,7 @@ export const PriceRangeScreen = ({ route, navigation }) => {
             setFinish(true);
         }, () => { navigation.navigate('Start') });
         Firestore.joinChat(pin, user.uid);
-        Firestore.sendMessage(pin, true, user.displayName);
+        Firestore.sendSystemMessage(pin, true, user.displayName);
     };
 
     const onStartSwiping = () => {
