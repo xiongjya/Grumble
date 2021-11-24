@@ -6,7 +6,9 @@ Luo Siyi, Xiong Jingya
 Apollo 11
 
 ## Project scope/Overview
-We aim to make an app that makes picking a place to eat easier in group settings by letting people swipe on restaurants.
+We aim to make an app that makes picking a place to eat easier in group settings by letting people swipe on restaurants. <br />
+Watch a clip of Grumble in action! <br />
+[![Watch the video](https://img.youtube.com/vi/wdLXXcG7LcA/hqdefault.jpg)](https://www.youtube.com/watch?v=wdLXXcG7LcA&t=12s&ab_channel=NUSOrbital)
 
 ## Purpose of the project
 Many of us have been crippled by choice when having to choose a place to eat, and this decision is all the more difficult in group settings. Our need to be accommodating to others often results in a collective unwillingness to admit what we really want and the process of collecting everyone’s preferences gets increasingly inconvenient as group sizes grow. 
@@ -103,10 +105,25 @@ Compared to similar apps on the App Store (such as Munch: Decide Where to Eat, T
 Furthermore, we allow users to create chat rooms based on the groups that they are in (with each session that they join), making it more convenient than to switch between our app and another messaging app for discussions. 
 
 ## Program flow
+### Authentication
 <img
-  width="500"
-  alt="Program flow"
-  src="https://github.com/xiongjya/Grumble/blob/main/images/program-flow.png">
+  src="https://github.com/xiongjya/Grumble/blob/main/images/authentication.png">
+  
+### Creating session/ entering preference
+<img
+  src="https://github.com/xiongjya/Grumble/blob/main/images/session.png">
+  
+### Swiping on restaurants
+<img
+  src="https://github.com/xiongjya/Grumble/blob/main/images/swipe.png">
+
+### Profile with restaurant history and favourites
+<img
+  src="https://github.com/xiongjya/Grumble/blob/main/images/profile2.png">
+
+### Extra: Chat feature
+<img
+  src="https://github.com/xiongjya/Grumble/blob/main/images/chat.png">
 
 ## Setting up
 Clone this repository
