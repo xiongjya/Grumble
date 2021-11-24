@@ -83,7 +83,7 @@ As users who have chosen a place to eat at after using the application,
  <img
   width="250"
   alt="Swiping in action"
-  src="https://github.com/xiongjya/Grumble/blob/main/images/swipe-in-action.PNG">
+  src="https://github.com/xiongjya/Grumble/blob/main/images/swipe-in-action.png">
  <img
   width="250"
   alt="Chats"
