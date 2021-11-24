@@ -7,7 +7,7 @@ export const login = async ({ email, password }, onSuccess, onError) => {
     const { user } = await auth.signInWithEmailAndPassword(email, password);
     return onSuccess(user);
   } catch (error) {
-    return onError(error);
+    return;
   }
 }
 
@@ -19,7 +19,7 @@ export const createAccount = async ({ name, email, password }, onSuccess, onErro
       return onSuccess(user);
     }
   } catch (error) {
-    return onError(error);
+    return;
   }
 }
 
