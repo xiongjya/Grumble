@@ -80,10 +80,6 @@ As users who have chosen a place to eat at after using the application,
   src="https://github.com/xiongjya/Grumble/blob/main/images/login.PNG">
  <img
   width="250"
-  alt="Swipe"
-  src="https://github.com/xiongjya/Grumble/blob/main/images/swipescreen.PNG">
- <img
-  width="250"
   alt="Swiping in action"
   src="https://github.com/xiongjya/Grumble/blob/main/images/swipe-in-action.PNG">
  <img
